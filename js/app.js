@@ -1,5 +1,9 @@
-// data for flash cards
-var flashCards = [];
+var Model = {
+  flashCards: []
+};
+
+var currentCard;
+var onQuestion = true;
 
 var FlashCard = function(question, answer) {
   this.question = question;
@@ -11,21 +15,43 @@ var FlashCard = function(question, answer) {
 // Furutre TODO: or create a generate deck based on popular questions?
 
 function initCards() {
-  flashCards.push(new FlashCard('What does this refer to in a click event callback function?',
+  Model.flashCards.push(new FlashCard('What does this refer to in a click event callback function?',
                                 'The Element that was Clicked on'));
-  flashCards.push(new FlashCard('5 + 5', '10'));
+  Model.flashCards.push(new FlashCard('5 + 5', '10'));
+  Model.flashCards.push(new FlashCard('hello', 'ni hao'));
 }
 
 initCards();
+currentCardIndex = 0;
+setCurrentCard(0);
+
+function setCurrentCard(index) {
+  currentCard = Model.flashCards[index];
+}
 
 function initDisplay() {
-  $('#card').html(flashCards[0].question);
+  $('#card').html(currentCard.question);
 }
 
 initDisplay();
 
 function flipCard() {
-  $('#card').html(flashCards[0].answer);
+  if (onQuestion) {
+    $('#card').html(currentCard.answer);
+    onQuestion = !onQuestion;
+  } else {
+    $('#card').html(currentCard.question);
+    onQuestion = !onQuestion;
+  }
 }
 
 $('.flip').on('click', flipCard);
+$('.next').on('click', nextCard);
+
+function nextCard() {
+  if (currentCardIndex < Model.flashCards.length - 1) {
+    currentCardIndex++;
+    setCurrentCard(currentCardIndex);
+    initDisplay();
+  }
+}
