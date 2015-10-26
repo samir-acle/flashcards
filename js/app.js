@@ -25,6 +25,10 @@ FlashCard.prototype = {
 var Game = {
   currentCardIndex: 0,
   onQuestion: true,
+  wrongArray: Model.flashcards,
+  correctArray: [],
+  numberRight: 0,
+  numberWrong: 0
 };
 
 
@@ -61,21 +65,35 @@ function flipCard() {
   }
 }
 
+
 $('.flip').on('click', flipCard);
 $('.next').on('click', nextCard);
+
 $('.correct-button').on('click', function() {
-  Game.currentCard.setAsRight();
+  var currentCard = Game.currentCard;
+  currentCard.setAsRight();
+  Game.correctArray.push(currentCard);
+  Game.wrongArray.splice(Game.wrongArray.indexOf(currentCard), 1);
+  nextCard();
+  Game.numberRight++;
   console.log(Game.currentCard);
+  console.log(Game.wrongArray);
 });
+
 $('.wrong-button').on('click', function() {
   Game.currentCard.setAsWrong();
+  nextCard();
   console.log(Game.currentCard);
+  console.log(Game.wrongArray);
+  Game.numberWrong++;
 });
 
 function nextCard() {
-  if (Game.currentCardIndex < Model.flashCards.length - 1) {
-    Game.currentCardIndex++;
-    setCurrentCard(Game.currentCardIndex);
+  if (Game.wrongArray.length > 0) {
+    var index = Math.floor(Math.random() * Game.wrongArray.length);
+    setCurrentCard(index);
     initDisplay();
+  } else {
+    console.log(Game.wrongArray.length);
   }
 }
