@@ -7,6 +7,7 @@
 	<title>FLASH CARDS</title>
 	<link rel="stylesheet" href="bower_components/normalize-css/normalize.css">
 	<link rel="stylesheet" href="css/styles.css">
+	<link href="bower_components/paper-input/paper-input.html" rel="import">
 </head>
 <body>
 	<main>
@@ -18,11 +19,17 @@
 			</div>
 			<button class='flip'>FLIP</button>
 			<button class='next'>NEXT</button>
+			<form>
+				<paper-input id='quest' label='Question/Prompt (Front of Card)'></paper-input>
+				<paper-input id='answer' label='Answer (Back of Card)'></paper-input>
+				<button type='submit' class='submit'>Add Card</button>
+			</form>
 		</div>
 	</main>
 
 	<!-- bower:js -->
 	<script src="bower_components/jquery/dist/jquery.js"></script>
+	<script src="bower_components/webcomponentsjs/webcomponents.js"></script>
 	<!-- endbower -->
 	<script src="js/app.js"></script>
 </body>

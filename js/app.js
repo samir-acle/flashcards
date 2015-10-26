@@ -13,11 +13,9 @@ FlashCard.prototype = {
   constructor: FlashCard,
   setAsWrong: function() {
     this.lastAnswer = 'wrong';
-    console.log(this.lastAnswer);
   },
   setAsRight: function() {
     this.lastAnswer = 'right';
-    console.log(this.lastAnswer);
   }
 };
 
@@ -40,6 +38,10 @@ var initCards = function() {
                                 'The Element that was Clicked on'));
   Model.flashcards.push(new FlashCard('5 + 5', '10'));
   Model.flashcards.push(new FlashCard('hello', 'ni hao'));
+  Model.flashcards.push(new FlashCard('quest',
+                                'answer'));
+  Model.flashcards.push(new FlashCard('no', 'way'));
+  Model.flashcards.push(new FlashCard('goodbye', 'zai jian'));
 };
 
 initCards();
@@ -57,10 +59,10 @@ initDisplay();
 
 function flipCard() {
   if (Game.onQuestion) {
-    $('#card').html(Game.currentCard.answer);
+    $('.card-text').html(Game.currentCard.answer);
     Game.onQuestion = !Game.onQuestion;
   } else {
-    $('#card').html(Game.currentCard.question);
+    $('.card-text').html(Game.currentCard.question);
     Game.onQuestion = !Game.onQuestion;
   }
 }
@@ -94,6 +96,19 @@ function nextCard() {
     setCurrentCard(index);
     initDisplay();
   } else {
-    console.log(Game.wrongArray.length);
+    $('.card-text').html('No More Cards');
   }
+}
+
+$('.submit').on('click', function(evt) {
+  evt.preventDefault();
+  var question = $('#quest').val();
+  var answer = $('#answer').val();
+  $('#quest').val('');
+  $('#answer').val('');
+  createNewCard(question, answer);
+});
+
+function createNewCard(question, answer) {
+  Model.flashcards.push(new FlashCard(question, answer));
 }
