@@ -1,0 +1,22 @@
+* {
+  box-sizing: border-box;
+}
+
+.board {
+  max-width: 960px;
+  height: 100vh;
+  position: relative;
+}
+
+.card {
+  width: 200px;
+  height: 200px;
+  border: 2px solid green;
+  margin: 20% auto;
+}
+
+.flip {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
