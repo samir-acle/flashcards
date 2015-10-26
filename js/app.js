@@ -1,57 +1,81 @@
-var Model = {
-  flashCards: []
-};
+'use strict';
 
-var currentCard;
-var onQuestion = true;
+var Model = {
+  flashcards: []
+};
 
 var FlashCard = function(question, answer) {
   this.question = question;
   this.answer = answer;
 };
 
+FlashCard.prototype = {
+  constructor: FlashCard,
+  setAsWrong: function() {
+    this.lastAnswer = 'wrong';
+    console.log(this.lastAnswer);
+  },
+  setAsRight: function() {
+    this.lastAnswer = 'right';
+    console.log(this.lastAnswer);
+  }
+};
+
+
+var Game = {
+  currentCardIndex: 0,
+  onQuestion: true,
+};
+
 
 //Future TODO: tie in with API (wolfram alpha?) to have answers populate themselves
 // Furutre TODO: or create a generate deck based on popular questions?
 
-function initCards() {
-  Model.flashCards.push(new FlashCard('What does this refer to in a click event callback function?',
+var initCards = function() {
+  Model.flashcards.push(new FlashCard('What does this refer to in a click event callback function?',
                                 'The Element that was Clicked on'));
-  Model.flashCards.push(new FlashCard('5 + 5', '10'));
-  Model.flashCards.push(new FlashCard('hello', 'ni hao'));
-}
+  Model.flashcards.push(new FlashCard('5 + 5', '10'));
+  Model.flashcards.push(new FlashCard('hello', 'ni hao'));
+};
 
 initCards();
-currentCardIndex = 0;
 setCurrentCard(0);
 
 function setCurrentCard(index) {
-  currentCard = Model.flashCards[index];
+  Game.currentCard = Model.flashcards[index];
 }
 
 function initDisplay() {
-  $('#card').html(currentCard.question);
+  $('.card-text').html(Game.currentCard.question);
 }
 
 initDisplay();
 
 function flipCard() {
-  if (onQuestion) {
-    $('#card').html(currentCard.answer);
-    onQuestion = !onQuestion;
+  if (Game.onQuestion) {
+    $('#card').html(Game.currentCard.answer);
+    Game.onQuestion = !Game.onQuestion;
   } else {
-    $('#card').html(currentCard.question);
-    onQuestion = !onQuestion;
+    $('#card').html(Game.currentCard.question);
+    Game.onQuestion = !Game.onQuestion;
   }
 }
 
 $('.flip').on('click', flipCard);
 $('.next').on('click', nextCard);
+$('.correct-button').on('click', function() {
+  Game.currentCard.setAsRight();
+  console.log(Game.currentCard);
+});
+$('.wrong-button').on('click', function() {
+  Game.currentCard.setAsWrong();
+  console.log(Game.currentCard);
+});
 
 function nextCard() {
-  if (currentCardIndex < Model.flashCards.length - 1) {
-    currentCardIndex++;
-    setCurrentCard(currentCardIndex);
+  if (Game.currentCardIndex < Model.flashCards.length - 1) {
+    Game.currentCardIndex++;
+    setCurrentCard(Game.currentCardIndex);
     initDisplay();
   }
 }
