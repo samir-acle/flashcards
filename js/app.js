@@ -1,5 +1,9 @@
 'use strict';
 
+//TODO: fix werid click button keyboard action
+//TODO: change to 3 options
+//TODO: generate decks based on answers
+
 var Model = {
   flashcards: []
 };
@@ -12,10 +16,13 @@ var FlashCard = function(question, answer) {
 FlashCard.prototype = {
   constructor: FlashCard,
   setAsWrong: function() {
-    this.lastAnswer = 'wrong';
+    this.lastAnswer = 'Wrong';
   },
   setAsRight: function() {
-    this.lastAnswer = 'right';
+    this.lastAnswer = 'Right';
+  },
+  setAsHasViewed: function() {
+    this.hasViewed = true;
   }
 };
 
@@ -23,7 +30,7 @@ FlashCard.prototype = {
 var Game = {
   currentCardIndex: 0,
   onQuestion: true,
-  wrongArray: Model.flashcards,
+  wrongArray: [],
   correctArray: [],
   numberRight: 0,
   numberWrong: 0
@@ -42,13 +49,17 @@ var initCards = function() {
                                 'answer'));
   Model.flashcards.push(new FlashCard('no', 'way'));
   Model.flashcards.push(new FlashCard('goodbye', 'zai jian'));
+
+  for (var i = 0; i < Model.flashcards.length; i++) {
+    Game.wrongArray.push(Model.flashcards[i]);
+  }
 };
 
 initCards();
 setCurrentCard(0);
 
 function setCurrentCard(index) {
-  Game.currentCard = Model.flashcards[index];
+  Game.currentCard = Game.wrongArray[index];
 }
 
 function initDisplay() {
@@ -76,26 +87,36 @@ function flipCard() {
 }
 
 
-$('.flip').on('click', flipCard);
-$('.next').on('click', nextCard);
-
+$('.flip').on('click', function(evt) {
+  evt.preventDefault();
+  flipCard();
+});
+$('.next').on('click', function(evt) {
+  evt.preventDefault();
+  nextCard();
+});
 $('.correct-button').on('click', function() {
   var currentCard = Game.currentCard;
+  if(currentCard.lastAnswer !== 'Right'){
+    updateCounters('Right', 1);
+  }
   currentCard.setAsRight();
+  currentCard.setAsHasViewed();
   Game.correctArray.push(currentCard);
   Game.wrongArray.splice(Game.wrongArray.indexOf(currentCard), 1);
+  updateHud();
   nextCard();
-  Game.numberRight++;
-  console.log(Game.currentCard);
-  console.log(Game.wrongArray);
 });
 
 $('.wrong-button').on('click', function() {
-  Game.currentCard.setAsWrong();
+  var currentCard = Game.currentCard;
+  if(currentCard.lastAnswer !== 'Wrong'){
+    updateCounters('Wrong', 1);
+  }
+  currentCard.setAsWrong();
+  currentCard.setAsHasViewed();
+  updateHud();
   nextCard();
-  console.log(Game.currentCard);
-  console.log(Game.wrongArray);
-  Game.numberWrong++;
 });
 
 function nextCard() {
@@ -120,7 +141,16 @@ $('.submit').on('click', function(evt) {
 });
 
 function createNewCard(question, answer) {
-  Model.flashcards.push(new FlashCard(question, answer));
+  var newCard = new FlashCard(question, answer);
+  console.log(Model.flashcards.length);
+  console.log(Game.wrongArray.length);
+  Model.flashcards.push(newCard);
+  console.log(Model.flashcards.length);
+  console.log(Game.wrongArray.length);
+  Game.wrongArray.push(newCard);
+  console.log(Model.flashcards.length);
+  console.log(Game.wrongArray.length);
+  updateHud();
 }
 
 function showButtons() {
@@ -131,4 +161,52 @@ function showButtons() {
 function hideButtons() {
   $('.correct-button').hide();
   $('.wrong-button').hide();
+}
+
+// $('body').on('keyup', function(evt) {
+//   if(evt.keyCode === 32) {
+//     flipCard();
+//   }
+// });
+
+$('.add').on('click', showEditMode);
+$('.close').on('click', hideEditMode);
+
+function showEditMode() {
+  $('form').show();
+}
+
+function hideEditMode() {
+  $('form').hide();
+}
+
+$('.delete').on('click', removeCard);
+
+function removeCard() {
+  var currentCard = Game.currentCard;
+  if(currentCard.hasViewed) {
+    var lastAnswer = currentCard.lastAnswer;
+    updateCounters(lastAnswer, -1);
+;  }
+  var index = Model.flashcards.indexOf(Game.currentCard);
+  Model.flashcards.splice(index,1);
+  nextCard();
+  updateHud();
+}
+
+function updateCounters(string, change) {
+  console.log(Game['number' + string]);
+  Game['number' + string] += change;
+  console.log(Game['number' + string]);
+  var counter = Game['number' + string];
+  var hud = $('.' + string.toLowerCase() + '-counter');
+  console.log(hud.html());
+  hud.html('Number ' + string + ' : ' + counter + ' out of ' + Model.flashcards.length + ' total cards');
+}
+
+function updateHud() {
+  var right = $('.right-counter');
+  var wrong = $('.wrong-counter');
+  right.html('Number Right: ' + Game.numberRight + ' out of ' + Model.flashcards.length + ' total cards');
+  wrong.html('Number Right: ' + Game.numberWrong + ' out of ' + Model.flashcards.length + ' total cards');
 }

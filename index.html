@@ -11,6 +11,10 @@
 </head>
 <body>
 	<main>
+		<div class='hud'>
+			<p class='right-counter'>Right</p>
+			<p class='wrong-counter'>Wrong</p>
+		</div>
 		<div id='board' class='board'>
 			<div id='card' class='card'>
 				<p class='card-text'></p>
@@ -19,12 +23,16 @@
 			</div>
 			<button class='next'>NEXT</button>
 			<button class='flip'>FLIP</button>
-			<form>
-				<paper-input id='quest' label='Question/Prompt (Front of Card)'></paper-input>
-				<paper-input id='answer' label='Answer (Back of Card)'></paper-input>
-				<button type='submit' class='submit'>Add Card</button>
-			</form>
+			<button class='add'>Add Card</button>
+			<button class='delete'>Delete Card</button>
 		</div>
+		<form>
+			<paper-input id='quest' label='Question/Prompt (Front of Card)'></paper-input>
+			<paper-input id='answer' label='Answer (Back of Card)'></paper-input>
+			<button type='submit' class='submit'>Add Card</button>
+			<button type='reset' class='clear'>Clear</button>
+			<div class='close'>&times;</div>
+		</form>
 	</main>
 
 	<!-- bower:js -->
