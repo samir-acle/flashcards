@@ -14,8 +14,13 @@
   border: 2px solid green;
 }
 
-.flip {
+/*.flip {
   position: absolute;
   top: 0;
   right: 0;
+}*/
+
+.correct-button,
+.wrong-button {
+  display: none;
 }

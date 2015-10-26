@@ -59,11 +59,19 @@ initDisplay();
 
 function flipCard() {
   if (Game.onQuestion) {
+    console.log('flipped to answer');
     $('.card-text').html(Game.currentCard.answer);
     Game.onQuestion = !Game.onQuestion;
+    // $('.correct-button').show();
+    // $('.wrong-button').show();
+    showButtons();
   } else {
+    console.log('flipped to quest');
     $('.card-text').html(Game.currentCard.question);
     Game.onQuestion = !Game.onQuestion;
+    // $('.correct-button').hide();
+    // $('.wrong-button').hide();
+    hideButtons();
   }
 }
 
@@ -95,9 +103,11 @@ function nextCard() {
     var index = Math.floor(Math.random() * Game.wrongArray.length);
     setCurrentCard(index);
     initDisplay();
+    Game.onQuestion = true;
   } else {
     $('.card-text').html('No More Cards');
   }
+  hideButtons();
 }
 
 $('.submit').on('click', function(evt) {
@@ -111,4 +121,14 @@ $('.submit').on('click', function(evt) {
 
 function createNewCard(question, answer) {
   Model.flashcards.push(new FlashCard(question, answer));
+}
+
+function showButtons() {
+  $('.correct-button').show();
+  $('.wrong-button').show();
+}
+
+function hideButtons() {
+  $('.correct-button').hide();
+  $('.wrong-button').hide();
 }
