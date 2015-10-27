@@ -2,7 +2,7 @@
 
 //TODO: fix werid click button keyboard action
 //TODO: fix remove card
-//TODO: change init
+//TODO: change init - or add start button
 //TODO: view cards based on comfort
 //TODO: D3 based on time data
 //TODO: shuffle cards in deck generator
@@ -114,6 +114,7 @@ function flipCard() {
     showButtons();
     Game.currentCard.setStopTime();
     Game.currentCard.updateTime();
+    checkTime();
   } else {
     console.log('flipped to quest');
     $('.card-text').html(Game.currentCard.question);
@@ -122,6 +123,30 @@ function flipCard() {
     // $('.wrong-button').hide();
     hideButtons();
   }
+}
+
+function checkTime() {
+  console.log(Game.currentCard.lastTurnTime);
+  if(Game.currentCard.lastTurnTime > 5000) {
+    console.log('prevent');
+    preventFullyKnows();
+  }
+}
+
+function preventFullyKnows() {
+  var fkButton = $('.fully-know');
+  fkButton.css({
+    background: 'rgba(155,155,155,1.0)',
+    'pointer-events': 'none'
+  });
+}
+
+function restoreFullyKnows() {
+  var fkButton = $('.fully-know');
+  fkButton.css({
+    background: 'buttonface',
+    'pointer-events': 'auto'
+  });
 }
 
 
@@ -168,6 +193,8 @@ function nextCard() {
   // } else {
   //   $('.card-text').html('No More Cards');
   // }
+  restoreFullyKnows();
+
   if (Game.cardIndex === Game.cardDeck.length - 1) {
     console.log('check');
     Game.cardIndex = 0;
@@ -207,14 +234,14 @@ function createNewCard(question, answer) {
 }
 
 function showButtons() {
-  $('.correct-button').show();
-  $('.wrong-button').show();
+  // $('.correct-button').show();
+  // $('.wrong-button').show();
   $('.choices').show();
 }
 
 function hideButtons() {
-  $('.correct-button').hide();
-  $('.wrong-button').hide();
+  // $('.correct-button').hide();
+  // $('.wrong-button').hide();
   $('.choices').hide();
 }
 
@@ -287,6 +314,11 @@ function showAllCards() {
     answerDiv.addClass('answer').html(card.answer);
     outerDiv.append(questionDiv);
     outerDiv.append(answerDiv);
+
+    var comfortDiv = $('<div/>');
+    comfortDiv.addClass('comfort');
+    comfortDiv.html(card.comfort);
+    outerDiv.append(comfortDiv);
     container.append(outerDiv);
   });
 
@@ -373,6 +405,9 @@ function generateDeck() {
   if (Game.useKK) {
     Game.cardDeck = Game.cardDeck.concat(kindaKnowArray);
   }
+
+  Game.cardDeck = shuffle(Game.cardDeck);
+  console.log(Game.cardDeck);
 }
 
 function init() {
@@ -408,6 +443,27 @@ function deckEmpty() {
   alert('deck is empty, generate new deck');
 }
 
+$('.card-menu-icon').on('click', function() {
+  $('.stats-container').toggle();
+});
+
+
+// below code written following post on http://bost.ocks.org/mike/shuffle/
+function shuffle(array) {
+  var shuffledArray = array;
+  var m = shuffledArray.length;
+  var swap, i;
+
+  while (m) {
+    m--;
+    i = Math.floor(Math.random() * m);
+    swap = shuffledArray[m];
+    shuffledArray[m] = shuffledArray[i];
+    shuffledArray[i] = swap;
+  }
+
+  return shuffledArray;
+}
 
 //random d3
 //TODO: somehow incorporate D3... maybe generate a chart/table after done studying

@@ -12,27 +12,28 @@
 <body>
 	<main>
 		<div class='hud'>
-			<p class='fk-count'>Fully Know</p>
-			<p class='kk-count'>Kinda Know</p>
-			<p class='dk-count'>Dont Know</p>
+			<p class='fk-count counters'>Fully Know</p>
+			<p class='kk-count counters'>Kinda Know</p>
+			<p class='dk-count counters'>Dont Know</p>
 		</div>
 		<div id='board' class='board'>
 			<div id='card' class='card'>
 				<p class='card-text'></p>
-				<button class='correct-button'>Got It</button>
-				<button class='wrong-button'>Wrong</button>
 				<div class='card-menu-icon'>&equiv;</div>
 			</div>
-			<div id='stats'></div>
+			<div class='stats-container'>
+				<h2>STATS</h2>
+				<div id='stats' class='stats'></div>
+			</div>
 			<button class='next'>NEXT</button>
 			<button class='flip'>FLIP</button>
 			<button class='add'>Add Card</button>
 			<button class='delete'>Delete Card</button>
 			<button class="all-cards">See All Flash Cards</button>
 			<div class='choices'>
-				<button class='fully-know'>fully know</button>
-				<button class='kinda-know'>kinda know</button>
-				<button class='dont-know'>dont know</button>
+				<button class='fully-know block'>fully know</button>
+				<button class='kinda-know block'>kinda know</button>
+				<button class='dont-know block'>dont know</button>
 			</div>
 		</div>
 		<form class='decks'>
