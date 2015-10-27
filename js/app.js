@@ -3,10 +3,9 @@
 //TODO: fix werid click button keyboard action
 //TODO: fix remove card
 //TODO: change init
-//TODO: add deck generator
 //TODO: view cards based on comfort
 //TODO: D3 based on time data
-//TODO: change next card / cards left in deft
+//TODO: shuffle cards in deck generator
 //TODO: at certain time, no longer allow Fully know
 
 //clean up code

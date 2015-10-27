@@ -12,6 +12,7 @@
   width: 200px;
   height: 200px;
   border: 2px solid green;
+  position: relative;
 }
 
 /*.flip {
@@ -88,4 +89,19 @@
   position: absolute;
   right: 100px;
   top: 0;
+}
+
+.card-menu-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: gray;
+  opacity: 0.5;
+  font-size: 36px;
+  height: 100%;
+  transition: opacity 0.35s ease;
+}
+
+.card-menu-icon:hover {
+  opacity: 1.0;
 }
