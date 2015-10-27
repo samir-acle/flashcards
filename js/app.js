@@ -171,18 +171,24 @@ function nextCard() {
   // }
   if (Game.cardIndex === Game.cardDeck.length - 1) {
     console.log('check');
-    generateDeck();
     Game.cardIndex = 0;
+    generateDeck();
+    console.log('cardDeck', Game.cardDeck);
   } else {
     Game.cardIndex++;
   }
 
-  setCurrentCard(Game.cardIndex);
-  updateDisplay();
-  Game.onQuestion = true;
-  setStats();
-  Game.currentCard.setStartTime();
-  hideButtons();
+  if (Game.cardDeck.length === 0) {
+    deckEmpty();
+  } else {
+    setCurrentCard(Game.cardIndex);
+    console.log('from next card');
+    updateDisplay();
+    Game.onQuestion = true;
+    setStats();
+    Game.currentCard.setStartTime();
+    hideButtons();
+  }
 }
 
 $('.submit').on('click', function(evt) {
@@ -377,6 +383,30 @@ function init() {
   setCurrentCard(Game.cardIndex);
   updateDisplay();
 
+}
+
+$('.generate').on('click', function(evt) {
+  evt.preventDefault();
+  var fkCheck = $('#fk:checked').val();
+  var kkCheck = $('#kk:checked').val();
+  var dkCheck = $('#dk:checked').val();
+
+  Game.useFK = fkCheck ? true : false;
+  Game.useKK = kkCheck ? true : false;
+  Game.useDK = dkCheck ? true : false;
+
+  generateDeck();
+  resetDeck();
+});
+
+function resetDeck() {
+  Game.cardIndex = 0;
+  setCurrentCard(Game.cardIndex);
+  updateDisplay();
+}
+
+function deckEmpty() {
+  alert('deck is empty, generate new deck');
 }
 
 

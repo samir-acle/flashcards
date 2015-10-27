@@ -34,7 +34,13 @@
 				<button class='dont-know'>dont know</button>
 			</div>
 		</div>
-		<form>
+		<form class='decks'>
+			<input id='fk' type="checkbox" value="useFK"><span>Fully Know</span>
+			<input id='kk' type="checkbox" value="useKK"><span>Kinda Know</span>
+			<input id='dk' type="checkbox" value="useDK" checked><span>Dont Know</span>
+			<button type='submit' class='generate'>Generate a New Deck</button>
+		</form>
+		<form class='add-card'>
 			<paper-input id='quest' label='Question/Prompt (Front of Card)'></paper-input>
 			<paper-input id='answer' label='Answer (Back of Card)'></paper-input>
 			<button type='submit' class='submit'>Add Card</button>

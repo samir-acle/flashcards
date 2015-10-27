@@ -29,7 +29,7 @@
   display: none;
 }
 
-form {
+.add-card {
   display: none;
   position: fixed;
   bottom: 0;
