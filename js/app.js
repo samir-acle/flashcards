@@ -235,8 +235,9 @@ $('.submit').on('click', function(evt) {
 function createNewCard(question, answer) {
   var newCard = new FlashCard(question, answer);
   Model.flashcards.push(newCard);
-  updateArrays();
-  updateHud();
+  updateAll();
+  // updateArrays();
+  // updateHud();
 }
 
 function showButtons() {
@@ -335,6 +336,7 @@ function showCards(array) {
       Game.currentCard = card;
       updateAll();
       removeOverlay();
+      Game.currentCard.updateViewCount();
     });
     var questionDiv = $('<div/>');
     var answerDiv = $('<div/>');
@@ -432,7 +434,7 @@ $('.dont-know').on('click', function() {
 });
 
 function updateAll() {
-  Game.currentCard.updateViewCount();
+  // Game.currentCard.updateViewCount();
   updateArrays();
   updateHud();
   setStats();
@@ -552,13 +554,15 @@ function updateBubbleSvg() {
   circles.enter().append('circle');
 
   circles.attr('cx', function(d,i){
-           return i * maxRadius * 2 + maxRadius;
+           return i % 5 * maxRadius * 2 + maxRadius;
          })
-         .attr('cy', 30)
+         .attr('cy', function(d,i){
+           return Math.floor(i / 5) * maxRadius * 2 + maxRadius;
+         })
          .attr('r', function(d,i){
            var radius = maxRadius - d.viewCount * 5;
            console.log(radius);
-           return radius < 0 ? 5 : radius;
+           return radius <= 0 ? 5 : radius;
          })
          .attr('fill', function(d){
            if (d.comfort === 'fully know'){
