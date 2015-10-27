@@ -3,6 +3,7 @@
 //TODO: fix werid click button keyboard action
 //TODO: change to 3 options
 //TODO: generate decks based on answers
+//TODO: fix remove card
 
 var Model = {
   flashcards: []
@@ -41,13 +42,13 @@ var Game = {
 // Furutre TODO: or create a generate deck based on popular questions?
 
 var initCards = function() {
-  Model.flashcards.push(new FlashCard('What does this refer to in a click event callback function?',
-                                'The Element that was Clicked on'));
+  Model.flashcards.push(new FlashCard('teacher',
+                                'lao shi'));
   Model.flashcards.push(new FlashCard('5 + 5', '10'));
   Model.flashcards.push(new FlashCard('hello', 'ni hao'));
-  Model.flashcards.push(new FlashCard('quest',
-                                'answer'));
-  Model.flashcards.push(new FlashCard('no', 'way'));
+  Model.flashcards.push(new FlashCard('but',
+                                'ke shi'));
+  Model.flashcards.push(new FlashCard('no', 'bu'));
   Model.flashcards.push(new FlashCard('goodbye', 'zai jian'));
 
   for (var i = 0; i < Model.flashcards.length; i++) {
@@ -209,4 +210,25 @@ function updateHud() {
   var wrong = $('.wrong-counter');
   right.html('Number Right: ' + Game.numberRight + ' out of ' + Model.flashcards.length + ' total cards');
   wrong.html('Number Right: ' + Game.numberWrong + ' out of ' + Model.flashcards.length + ' total cards');
+}
+
+$('.all-cards').on('click', showAllCards);
+
+function showAllCards() {
+  var container = $('<div class="container"></div>');
+
+  Model.flashcards.forEach(function(card){
+    var outerDiv = $('<div/>');
+    outerDiv.addClass('outer-div');
+    var questionDiv = $('<div/>');
+    var answerDiv = $('<div/>');
+    questionDiv.addClass('question').html(card.question);
+    answerDiv.addClass('answer').html(card.answer);
+    outerDiv.append(questionDiv);
+    outerDiv.append(answerDiv);
+    console.log(outerDiv);
+    container.append(outerDiv);
+  });
+
+  $('body').append(container);
 }
