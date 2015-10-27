@@ -322,11 +322,19 @@ $('.dk-cards').on('click', function() {
 });
 
 function showCards(array) {
+  if ($('.stats-container').css('display') === 'block'){
+    toggleStatsBar();
+  }
   var container = $('<div class="container"></div>');
 
   array.forEach(function(card){
     var outerDiv = $('<div/>');
     outerDiv.addClass('outer-div');
+    outerDiv.on('click', function() {
+      Game.currentCard = card;
+      updateAll();
+      removeOverlay();
+    });
     var questionDiv = $('<div/>');
     var answerDiv = $('<div/>');
     questionDiv.addClass('question').html(card.question);
@@ -409,14 +417,17 @@ function createTicks(className, views) {
 $('.fully-know').on('click', function() {
   Game.currentCard.setAsFullyKnow();
   updateAll();
+  nextCard();
 });
 $('.kinda-know').on('click', function() {
   Game.currentCard.setAsKindaKnow();
   updateAll();
+  nextCard();
 });
 $('.dont-know').on('click', function() {
   Game.currentCard.setAsDoNotKnow();
   updateAll();
+  nextCard();
 });
 
 function updateAll() {
@@ -424,7 +435,8 @@ function updateAll() {
   updateArrays();
   updateHud();
   setStats();
-  nextCard();
+  updateDisplay();
+  // nextCard();
 }
 
 function updateArrays() {
@@ -499,10 +511,11 @@ function deckEmpty() {
   alert('deck is empty, generate new deck');
 }
 
-$('.card-menu-icon').on('click', function() {
-  $('.stats-container').toggle();
-});
+$('.card-menu-icon').on('click', toggleStatsBar);
 
+function toggleStatsBar() {
+  $('.stats-container').toggle();
+}
 
 // below code written following post on http://bost.ocks.org/mike/shuffle/
 function shuffle(array) {
