@@ -3,6 +3,7 @@
 //TODO: fix werid click button keyboard action
 //TODO: fix remove card
 //TODO: change init - or add start button
+//TODO; fx it for time
 //TODO: view cards based on comfort
 //TODO: D3 based on time data
 //TODO: shuffle cards in deck generator
@@ -25,6 +26,7 @@ var FlashCard = function(question, answer) {
   this.totalTime = 0;
   this.lastTurnTime = 0;
   this.timeArray = [];
+  this.comfort = 'do not know';
 };
 
 FlashCard.prototype = {
@@ -194,6 +196,8 @@ function nextCard() {
   //   $('.card-text').html('No More Cards');
   // }
   restoreFullyKnows();
+  Game.currentCard.setStopTime();
+  Game.currentCard.updateTime();
 
   if (Game.cardIndex === Game.cardDeck.length - 1) {
     console.log('check');
@@ -213,6 +217,7 @@ function nextCard() {
     Game.onQuestion = true;
     setStats();
     Game.currentCard.setStartTime();
+    Game.currentCard.updateViewCount();
     hideButtons();
   }
 }
@@ -300,12 +305,26 @@ function updateHud() {
   dk.html('Dont Know: ' + dontKnowArray.length + ' of ' + Model.flashcards.length);
 }
 
-$('.all-cards').on('click', showAllCards);
+$('.all-cards').on('click', function() {
+  showCards(Model.flashcards);
+});
 
-function showAllCards() {
+$('.fk-cards').on('click', function() {
+  showCards(fullyKnowArray);
+});
+
+$('.kk-cards').on('click', function() {
+  showCards(kindaKnowArray);
+});
+
+$('.dk-cards').on('click', function() {
+  showCards(dontKnowArray);
+});
+
+function showCards(array) {
   var container = $('<div class="container"></div>');
 
-  Model.flashcards.forEach(function(card){
+  array.forEach(function(card){
     var outerDiv = $('<div/>');
     outerDiv.addClass('outer-div');
     var questionDiv = $('<div/>');
@@ -339,15 +358,52 @@ function removeOverlay() {
 function setStats() {
   $('#stats').empty();
   var statsContainer = $('#stats');
-  var lastAnswer = $('<div/>')
-  lastAnswer.addClass('stat').html(Game.currentCard.lastAnswer);
+  // var lastAnswer = $('<div/>')
+  // lastAnswer.addClass('stat').html(Game.currentCard.lastAnswer);
   var viewed = $('<div/>');
-  viewed.addClass('stat').html(Game.currentCard.viewCount);
+  viewed.addClass('stat-views').html('Number of Views: ' + Game.currentCard.viewCount);
   var comfort = $('<div/>');
-  comfort.addClass('stat').html(Game.currentCard.comfort);
+  comfort.addClass('stat').html('Comfort Level: ' + Game.currentCard.comfort);
+  var timeViewed = $('<div/>');
+  timeViewed.addClass('stat').html('Total Time Spent Looking At Card: ' + Game.currentCard.totalTime / 1000 + ' seconds');
   // var viewed = $('<div/>');
   // viewed.addClass('stat').html(Game.currentCard.hasViewed);
-  statsContainer.append(lastAnswer, viewed, comfort);
+  statsContainer.append(viewed, comfort, timeViewed);
+  createTicks('.stat-views',Game.currentCard.viewCount);
+}
+
+function createTicks(className, views) {
+  console.log('creating');
+  var viewsArray = [];
+  var x = 5;
+  var y1 = 5;
+  var y2 = 20;
+  var maxX = views < 20 ? 100 : x * views;
+  console.log(views < 10);
+  console.log(maxX);
+
+  for (var i = 0; i < views; i++) {
+    if (i % 5 === 4) {
+      viewsArray.push([5,x,y1,y2]);
+    }
+    else {
+      viewsArray.push([0,x,y1,y2]);
+    }
+  }
+
+  var svgContainer = d3.select(className).append('svg').attr('width', maxX).attr('height', 30);
+
+  var lines = svgContainer.selectAll('line').data(viewsArray).enter().append('line');
+
+  var lineAttributes = lines.attr('x1', function(d,i){
+    return (i - d[0]) * d[1] + d[1];
+  }).attr('x2', function(d,i){
+    return i * d[1] + d[1];
+  }).attr('y1', function(d,i){
+    return d[2];
+  }).attr('y2',function(d,i){
+    return d[3];
+  }).attr('stroke-width', 2).attr('stroke','black');
 }
 
 $('.fully-know').on('click', function() {
