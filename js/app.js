@@ -65,6 +65,7 @@ function setCurrentCard(index) {
 
 function initDisplay() {
   $('.card-text').html(Game.currentCard.question);
+  updateHud();
 }
 
 initDisplay();
@@ -171,7 +172,7 @@ function hideButtons() {
 // });
 
 $('.add').on('click', showEditMode);
-$('.close').on('click', hideEditMode);
+$('#close-form').on('click', hideEditMode);
 
 function showEditMode() {
   $('form').show();
@@ -209,7 +210,7 @@ function updateHud() {
   var right = $('.right-counter');
   var wrong = $('.wrong-counter');
   right.html('Number Right: ' + Game.numberRight + ' out of ' + Model.flashcards.length + ' total cards');
-  wrong.html('Number Right: ' + Game.numberWrong + ' out of ' + Model.flashcards.length + ' total cards');
+  wrong.html('Number Wrong: ' + Game.numberWrong + ' out of ' + Model.flashcards.length + ' total cards');
 }
 
 $('.all-cards').on('click', showAllCards);
@@ -226,9 +227,19 @@ function showAllCards() {
     answerDiv.addClass('answer').html(card.answer);
     outerDiv.append(questionDiv);
     outerDiv.append(answerDiv);
-    console.log(outerDiv);
     container.append(outerDiv);
   });
 
+  var closeIcon = $('<div id="close-all" class="close">&times;</div>');
+  closeIcon.on('click', removeOverlay);
+  container.append(closeIcon);
+
   $('body').append(container);
+}
+
+$('#close-all').on('click', removeOverlay);
+
+function removeOverlay() {
+  console.log('trying to close');
+  $('.container').remove();
 }
