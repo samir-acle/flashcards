@@ -7,6 +7,9 @@
 //TODO: view cards based on comfort
 //TODO: D3 based on time data
 //TODO: change next card / cards left in deft
+//TODO: at certain time, no longer allow Fully know
+
+//clean up code
 
 
 var fullyKnowArray = [];
@@ -65,14 +68,20 @@ var Game = {
   wrongArray: [],
   correctArray: [],
   numberRight: 0,
-  numberWrong: 0
+  numberWrong: 0,
+  useFK: false,
+  useKK: false,
+  useDK: true,
+  cardDeck: [],
+  cardIndex: 0
 };
 
 
 //Future TODO: tie in with API (wolfram alpha?) to have answers populate themselves
 // Furutre TODO: or create a generate deck based on popular questions?
+init();
 
-var initCards = function() {
+function initCards() {
   Model.flashcards.push(new FlashCard('teacher',
                                 'lao shi'));
   Model.flashcards.push(new FlashCard('5 + 5', '10'));
@@ -82,24 +91,19 @@ var initCards = function() {
   Model.flashcards.push(new FlashCard('no', 'bu'));
   Model.flashcards.push(new FlashCard('goodbye', 'zai jian'));
 
-  for (var i = 0; i < Model.flashcards.length; i++) {
-    Game.wrongArray.push(Model.flashcards[i]);
-  }
-};
-
-initCards();
-setCurrentCard(0);
-
-function setCurrentCard(index) {
-  Game.currentCard = Game.wrongArray[index];
+  // for (var i = 0; i < Model.flashcards.length; i++) {
+  //   Game.wrongArray.push(Model.flashcards[i]);
+  // }
 }
 
-function initDisplay() {
+function setCurrentCard(index) {
+  Game.currentCard = Game.cardDeck[index];
+}
+
+function updateDisplay() {
   $('.card-text').html(Game.currentCard.question);
   updateHud();
 }
-
-initDisplay();
 
 function flipCard() {
   if (Game.onQuestion) {
@@ -155,16 +159,29 @@ $('.next').on('click', function(evt) {
 // });
 
 function nextCard() {
-  if (Game.wrongArray.length > 0) {
-    var index = Math.floor(Math.random() * Game.wrongArray.length);
-    setCurrentCard(index);
-    initDisplay();
-    Game.onQuestion = true;
-    setStats();
-    Game.currentCard.setStartTime();
+  // if (Game.wrongArray.length > 0) {
+  //   var index = Math.floor(Math.random() * Game.wrongArray.length);
+  //   setCurrentCard(index);
+  //   initDisplay();
+  //   Game.onQuestion = true;
+  //   setStats();
+  //   Game.currentCard.setStartTime();
+  // } else {
+  //   $('.card-text').html('No More Cards');
+  // }
+  if (Game.cardIndex === Game.cardDeck.length - 1) {
+    console.log('check');
+    generateDeck();
+    Game.cardIndex = 0;
   } else {
-    $('.card-text').html('No More Cards');
+    Game.cardIndex++;
   }
+
+  setCurrentCard(Game.cardIndex);
+  updateDisplay();
+  Game.onQuestion = true;
+  setStats();
+  Game.currentCard.setStartTime();
   hideButtons();
 }
 
@@ -228,15 +245,15 @@ function removeCard() {
   updateHud();
 }
 
-function updateCounters(string, change) {
-  console.log(Game['number' + string]);
-  Game['number' + string] += change;
-  console.log(Game['number' + string]);
-  var counter = Game['number' + string];
-  var hud = $('.' + string.toLowerCase() + '-counter');
-  console.log(hud.html());
-  hud.html('Number ' + string + ' : ' + counter + ' out of ' + Model.flashcards.length + ' total cards');
-}
+// function updateCounters(string, change) {
+//   console.log(Game['number' + string]);
+//   Game['number' + string] += change;
+//   console.log(Game['number' + string]);
+//   var counter = Game['number' + string];
+//   var hud = $('.' + string.toLowerCase() + '-counter');
+//   console.log(hud.html());
+//   hud.html('Number ' + string + ' : ' + counter + ' out of ' + Model.flashcards.length + ' total cards');
+// }
 
 function updateHud() {
   // var right = $('.right-counter');
@@ -335,6 +352,31 @@ function updateArrays() {
   fullyKnowArray = fkArray;
   kindaKnowArray = kkArray;
   dontKnowArray = dkArray;
+}
+
+function generateDeck() {
+  Game.cardDeck = [];
+
+  if (Game.useDK) {
+    Game.cardDeck = Game.cardDeck.concat(dontKnowArray);
+  }
+
+  if (Game.useFK) {
+    Game.cardDeck = Game.cardDeck.concat(fullyKnowArray);
+  }
+
+  if (Game.useKK) {
+    Game.cardDeck = Game.cardDeck.concat(kindaKnowArray);
+  }
+}
+
+function init() {
+  initCards();
+  updateArrays();
+  generateDeck();
+  setCurrentCard(Game.cardIndex);
+  updateDisplay();
+
 }
 
 
