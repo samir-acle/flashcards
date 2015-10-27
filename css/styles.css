@@ -25,6 +25,10 @@
   display: none;
 }
 
+.choices {
+  display: none;
+}
+
 form {
   display: none;
   position: fixed;

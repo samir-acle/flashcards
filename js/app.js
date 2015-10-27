@@ -1,9 +1,14 @@
 'use strict';
 
 //TODO: fix werid click button keyboard action
-//TODO: change to 3 options
-//TODO: generate decks based on answers
 //TODO: fix remove card
+//TODO: change init
+//TODO: add deck generator
+//TODO: view cards based on comfort
+//TODO: D3 based on time data
+//TODO: change next card / cards left in deft
+
+
 var fullyKnowArray = [];
 var kindaKnowArray = [];
 var dontKnowArray = [];
@@ -15,6 +20,9 @@ var FlashCard = function(question, answer) {
   this.question = question;
   this.answer = answer;
   this.viewCount = 0;
+  this.totalTime = 0;
+  this.lastTurnTime = 0;
+  this.timeArray = [];
 };
 
 FlashCard.prototype = {
@@ -36,6 +44,17 @@ FlashCard.prototype = {
   },
   setAsDoNotKnow: function() {
     this.comfort = 'do not know';
+  },
+  setStartTime: function() {
+    this.oldTime = Date.now();
+  },
+  setStopTime: function() {
+    this.newTime = Date.now();
+  },
+  updateTime: function() {
+    this.lastTurnTime = this.newTime - this.oldTime; //ms
+    this.timeArray.push(this.lastTurnTime);
+    this.totalTime += this.lastTurnTime;
   }
 };
 
@@ -90,6 +109,8 @@ function flipCard() {
     // $('.correct-button').show();
     // $('.wrong-button').show();
     showButtons();
+    Game.currentCard.setStopTime();
+    Game.currentCard.updateTime();
   } else {
     console.log('flipped to quest');
     $('.card-text').html(Game.currentCard.question);
@@ -140,6 +161,7 @@ function nextCard() {
     initDisplay();
     Game.onQuestion = true;
     setStats();
+    Game.currentCard.setStartTime();
   } else {
     $('.card-text').html('No More Cards');
   }
@@ -158,18 +180,20 @@ $('.submit').on('click', function(evt) {
 function createNewCard(question, answer) {
   var newCard = new FlashCard(question, answer);
   Model.flashcards.push(newCard);
-  Game.wrongArray.push(newCard);
+  updateArrays();
   updateHud();
 }
 
 function showButtons() {
   $('.correct-button').show();
   $('.wrong-button').show();
+  $('.choices').show();
 }
 
 function hideButtons() {
   $('.correct-button').hide();
   $('.wrong-button').hide();
+  $('.choices').hide();
 }
 
 // $('#board').on('keyup', function(evt) {
@@ -312,3 +336,9 @@ function updateArrays() {
   kindaKnowArray = kkArray;
   dontKnowArray = dkArray;
 }
+
+
+//random d3
+//TODO: somehow incorporate D3... maybe generate a chart/table after done studying
+//TODO: data - # times views, how many fk,dk,kk responses?
+//TODO: add that into the view all cards overlay?
