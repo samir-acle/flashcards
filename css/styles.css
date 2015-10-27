@@ -77,3 +77,11 @@ form {
   text-align: center;
   height: 50%;
 }
+
+#stats {
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  right: 100px;
+  top: 0;
+}

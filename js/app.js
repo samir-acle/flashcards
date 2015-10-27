@@ -4,7 +4,9 @@
 //TODO: change to 3 options
 //TODO: generate decks based on answers
 //TODO: fix remove card
-
+var fullyKnowArray = [];
+var kindaKnowArray = [];
+var dontKnowArray = [];
 var Model = {
   flashcards: []
 };
@@ -12,6 +14,7 @@ var Model = {
 var FlashCard = function(question, answer) {
   this.question = question;
   this.answer = answer;
+  this.viewCount = 0;
 };
 
 FlashCard.prototype = {
@@ -22,8 +25,17 @@ FlashCard.prototype = {
   setAsRight: function() {
     this.lastAnswer = 'Right';
   },
-  setAsHasViewed: function() {
-    this.hasViewed = true;
+  updateViewCount: function() {
+    this.viewCount++;
+  },
+  setAsFullyKnow: function() {
+    this.comfort = 'fully know';
+  },
+  setAsKindaKnow: function() {
+    this.comfort = 'kinda know';
+  },
+  setAsDoNotKnow: function() {
+    this.comfort = 'do not know';
   }
 };
 
@@ -97,29 +109,29 @@ $('.next').on('click', function(evt) {
   evt.preventDefault();
   nextCard();
 });
-$('.correct-button').on('click', function() {
-  var currentCard = Game.currentCard;
-  if(currentCard.lastAnswer !== 'Right'){
-    updateCounters('Right', 1);
-  }
-  currentCard.setAsRight();
-  currentCard.setAsHasViewed();
-  Game.correctArray.push(currentCard);
-  Game.wrongArray.splice(Game.wrongArray.indexOf(currentCard), 1);
-  updateHud();
-  nextCard();
-});
-
-$('.wrong-button').on('click', function() {
-  var currentCard = Game.currentCard;
-  if(currentCard.lastAnswer !== 'Wrong'){
-    updateCounters('Wrong', 1);
-  }
-  currentCard.setAsWrong();
-  currentCard.setAsHasViewed();
-  updateHud();
-  nextCard();
-});
+// $('.correct-button').on('click', function() {
+//   var currentCard = Game.currentCard;
+//   if(currentCard.lastAnswer !== 'Right'){
+//     updateCounters('Right', 1);
+//   }
+//   currentCard.setAsRight();
+//   currentCard.setAsHasViewed();
+//   Game.correctArray.push(currentCard);
+//   Game.wrongArray.splice(Game.wrongArray.indexOf(currentCard), 1);
+//   updateHud();
+//   nextCard();
+// });
+//
+// $('.wrong-button').on('click', function() {
+//   var currentCard = Game.currentCard;
+//   if(currentCard.lastAnswer !== 'Wrong'){
+//     updateCounters('Wrong', 1);
+//   }
+//   currentCard.setAsWrong();
+//   currentCard.setAsHasViewed();
+//   updateHud();
+//   nextCard();
+// });
 
 function nextCard() {
   if (Game.wrongArray.length > 0) {
@@ -127,6 +139,7 @@ function nextCard() {
     setCurrentCard(index);
     initDisplay();
     Game.onQuestion = true;
+    setStats();
   } else {
     $('.card-text').html('No More Cards');
   }
@@ -144,14 +157,8 @@ $('.submit').on('click', function(evt) {
 
 function createNewCard(question, answer) {
   var newCard = new FlashCard(question, answer);
-  console.log(Model.flashcards.length);
-  console.log(Game.wrongArray.length);
   Model.flashcards.push(newCard);
-  console.log(Model.flashcards.length);
-  console.log(Game.wrongArray.length);
   Game.wrongArray.push(newCard);
-  console.log(Model.flashcards.length);
-  console.log(Game.wrongArray.length);
   updateHud();
 }
 
@@ -165,8 +172,9 @@ function hideButtons() {
   $('.wrong-button').hide();
 }
 
-// $('body').on('keyup', function(evt) {
+// $('#board').on('keyup', function(evt) {
 //   if(evt.keyCode === 32) {
+//     evt.removeDefault();
 //     flipCard();
 //   }
 // });
@@ -207,10 +215,16 @@ function updateCounters(string, change) {
 }
 
 function updateHud() {
-  var right = $('.right-counter');
-  var wrong = $('.wrong-counter');
-  right.html('Number Right: ' + Game.numberRight + ' out of ' + Model.flashcards.length + ' total cards');
-  wrong.html('Number Wrong: ' + Game.numberWrong + ' out of ' + Model.flashcards.length + ' total cards');
+  // var right = $('.right-counter');
+  // var wrong = $('.wrong-counter');
+  // right.html('Number Right: ' + Game.numberRight + ' out of ' + Model.flashcards.length + ' total cards');
+  // wrong.html('Number Wrong: ' + Game.numberWrong + ' out of ' + Model.flashcards.length + ' total cards');
+  var fk = $('.fk-count');
+  var kk = $('.kk-count');
+  var dk = $('.dk-count');
+  fk.html('Fully Know: ' + fullyKnowArray.length + ' of ' + Model.flashcards.length);
+  kk.html('Kinda Know: ' + kindaKnowArray.length + ' of ' + Model.flashcards.length);
+  dk.html('Dont Know: ' + dontKnowArray.length + ' of ' + Model.flashcards.length);
 }
 
 $('.all-cards').on('click', showAllCards);
@@ -242,4 +256,59 @@ $('#close-all').on('click', removeOverlay);
 function removeOverlay() {
   console.log('trying to close');
   $('.container').remove();
+}
+
+function setStats() {
+  $('#stats').empty();
+  var statsContainer = $('#stats');
+  var lastAnswer = $('<div/>')
+  lastAnswer.addClass('stat').html(Game.currentCard.lastAnswer);
+  var viewed = $('<div/>');
+  viewed.addClass('stat').html(Game.currentCard.viewCount);
+  var comfort = $('<div/>');
+  comfort.addClass('stat').html(Game.currentCard.comfort);
+  // var viewed = $('<div/>');
+  // viewed.addClass('stat').html(Game.currentCard.hasViewed);
+  statsContainer.append(lastAnswer, viewed, comfort);
+}
+
+$('.fully-know').on('click', function() {
+  Game.currentCard.setAsFullyKnow();
+  updateAll();
+});
+$('.kinda-know').on('click', function() {
+  Game.currentCard.setAsKindaKnow();
+  updateAll();
+});
+$('.dont-know').on('click', function() {
+  Game.currentCard.setAsDoNotKnow();
+  updateAll();
+});
+
+function updateAll() {
+  Game.currentCard.updateViewCount();
+  updateArrays();
+  updateHud();
+  setStats();
+  nextCard();
+}
+
+function updateArrays() {
+  var fkArray = [];
+  var kkArray = [];
+  var dkArray = [];
+
+  Model.flashcards.forEach(function(card){
+    if (card.comfort === 'fully know') {
+      fkArray.push(card);
+    } else if (card.comfort === 'kinda know') {
+      kkArray.push(card);
+    } else {
+      dkArray.push(card);
+    }
+  });
+
+  fullyKnowArray = fkArray;
+  kindaKnowArray = kkArray;
+  dontKnowArray = dkArray;
 }

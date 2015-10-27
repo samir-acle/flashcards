@@ -12,8 +12,9 @@
 <body>
 	<main>
 		<div class='hud'>
-			<p class='right-counter'>Right</p>
-			<p class='wrong-counter'>Wrong</p>
+			<p class='fk-count'>Fully Know</p>
+			<p class='kk-count'>Kinda Know</p>
+			<p class='dk-count'>Dont Know</p>
 		</div>
 		<div id='board' class='board'>
 			<div id='card' class='card'>
@@ -21,11 +22,17 @@
 				<button class='correct-button'>Got It</button>
 				<button class='wrong-button'>Wrong</button>
 			</div>
+			<div id='stats'></div>
 			<button class='next'>NEXT</button>
 			<button class='flip'>FLIP</button>
 			<button class='add'>Add Card</button>
 			<button class='delete'>Delete Card</button>
 			<button class="all-cards">See All Flash Cards</button>
+			<div class='choices'>
+				<button class='fully-know'>fully know</button>
+				<button class='kinda-know'>kinda know</button>
+				<button class='dont-know'>dont know</button>
+			</div>
 		</div>
 		<form>
 			<paper-input id='quest' label='Question/Prompt (Front of Card)'></paper-input>
