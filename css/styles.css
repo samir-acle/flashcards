@@ -4,8 +4,9 @@
 
 .board {
   max-width: 960px;
-  height: 100vh;
+  height: 80vh;
   position: relative;
+  margin: 0 auto;
 }
 
 .card {
@@ -148,4 +149,19 @@ h2 {
 .block {
   display: block;
   margin: 10px;
+}
+
+.bubbles {
+  height: 100%;
+  position: absolute;
+  width: calc(50% - 100px);
+  top: 0;
+  left: 0;
+}
+
+.buttons {
+  width: 50%;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }

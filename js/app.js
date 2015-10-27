@@ -198,6 +198,7 @@ function nextCard() {
   restoreFullyKnows();
   Game.currentCard.setStopTime();
   Game.currentCard.updateTime();
+  updateBubbleSvg();
 
   if (Game.cardIndex === Game.cardDeck.length - 1) {
     console.log('check');
@@ -436,6 +437,7 @@ function updateAll() {
   updateHud();
   setStats();
   updateDisplay();
+  updateBubbleSvg();
   // nextCard();
 }
 
@@ -538,3 +540,35 @@ function shuffle(array) {
 //TODO: somehow incorporate D3... maybe generate a chart/table after done studying
 //TODO: data - # times views, how many fk,dk,kk responses?
 //TODO: add that into the view all cards overlay?
+
+Game.svgContainer = d3.select('.bubbles').append('svg').attr('width','100%').attr('height','100%');
+
+function updateBubbleSvg() {
+  //if loop to only create first time or sep function
+  var maxRadius = 30;
+  //update
+  var circles = Game.svgContainer.selectAll('circle').data(Model.flashcards);
+  //enter
+  circles.enter().append('circle');
+
+  circles.attr('cx', function(d,i){
+           return i * maxRadius * 2 + maxRadius;
+         })
+         .attr('cy', 30)
+         .attr('r', function(d,i){
+           var radius = maxRadius - d.viewCount * 5;
+           console.log(radius);
+           return radius < 0 ? 5 : radius;
+         })
+         .attr('fill', function(d){
+           if (d.comfort === 'fully know'){
+             return 'green';
+           } else if (d.comfort === 'kinda know'){
+             return 'yellow';
+           } else {
+             return 'red';
+           }
+         });
+  //exit
+  circles.exit().remove();
+}
