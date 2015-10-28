@@ -79,6 +79,7 @@ var Game = {
   useDK: true,
   cardDeck: [],
   cardIndex: 0,
+  deckEmpty: false,
   svgContainer: d3.select('.bubbles').append('svg').attr('width','100%').attr('height','100%')
 };
 
@@ -123,8 +124,10 @@ function updateDisplay() {
 }
 
 function flipCard() {
+  if(!Game.deckEmpty){
     Game.onQuestion = !Game.onQuestion;
     updateAll();
+  }
 }
 
 function checkTime() {
@@ -165,24 +168,26 @@ function stopTime() {
 }
 
 function nextCard() {
-  restoreFullyKnows();
-  stopTime();
+  if(!Game.deckEmpty) {
+    restoreFullyKnows();
+    stopTime();
 
-  // updateBubbleSvg();
+    // updateBubbleSvg();
 
-  if (Game.cardIndex === Game.cardDeck.length - 1) {
-    Game.cardIndex = 0;
-    generateDeck();
-  } else {
-    Game.cardIndex++;
-  }
+    if (Game.cardIndex === Game.cardDeck.length - 1) {
+      Game.cardIndex = 0;
+      generateDeck();
+    } else {
+      Game.cardIndex++;
+    }
 
-  if (Game.cardDeck.length === 0) {
-    deckEmpty();
-  } else {
-    setCurrentCard(Game.cardDeck[Game.cardIndex]);
-    Game.onQuestion = true;
-    hideButtons();
+    if (Game.cardDeck.length === 0) {
+      deckEmpty();
+    } else {
+      setCurrentCard(Game.cardDeck[Game.cardIndex]);
+      Game.onQuestion = true;
+      hideButtons();
+    }
   }
 }
 
@@ -442,6 +447,10 @@ function generateDeck() {
   }
 
   Game.cardDeck = shuffle(Game.cardDeck);
+
+  if(Game.cardDeck.length !== 0) {
+    Game.deckEmpty = false;
+  }
 }
 
 function init() {
@@ -475,7 +484,9 @@ function resetDeck() {
 }
 
 function deckEmpty() {
-  alert('deck is empty, generate new deck');
+  $('.card-text').html('No more cards in deck, please generate a new deck below.');
+  hideButtons();
+  Game.deckEmpty = true;
 }
 
 $('.card-menu-icon').on('click', toggleMenuBar);
