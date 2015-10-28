@@ -215,12 +215,20 @@ $('.reset').on('click', resetGame);
 function initCards() {
   Model.flashcards.push(new FlashCard('teacher',
     'lao shi'));
-  Model.flashcards.push(new FlashCard('5 + 5', '10'));
+  Model.flashcards.push(new FlashCard('lawyer', 'lu shi'));
   Model.flashcards.push(new FlashCard('hello', 'ni hao'));
   Model.flashcards.push(new FlashCard('but',
     'ke shi'));
-  Model.flashcards.push(new FlashCard('no', 'bu'));
+  Model.flashcards.push(new FlashCard('cola', 'ke le'));
   Model.flashcards.push(new FlashCard('goodbye', 'zai jian'));
+  Model.flashcards.push(new FlashCard('school',
+    'xue xiao'));
+  Model.flashcards.push(new FlashCard('beer', 'pi jiu'));
+  Model.flashcards.push(new FlashCard('student', 'xue sheng'));
+  Model.flashcards.push(new FlashCard('father',
+    'ba ba'));
+  Model.flashcards.push(new FlashCard('mother', 'ma ma'));
+  Model.flashcards.push(new FlashCard('water', 'shui'));
 }
 
 /**
