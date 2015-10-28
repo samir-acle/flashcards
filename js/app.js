@@ -10,9 +10,6 @@
 
 'use strict';
 
-var fullyKnowArray = [];
-var kindaKnowArray = [];
-var dontKnowArray = [];
 /** Object to hold data for all of the flashcards*/
 var Model = {
   flashcards: []
@@ -85,6 +82,9 @@ var Game = {
   cardDeck: [],
   cardIndex: 0,
   deckEmpty: false,
+  fullyKnowArray: [],
+  kindaKnowArray: [],
+  dontKnowArray: [],
   svgContainer: d3.select('.bubbles').append('svg').attr('width', '100%').attr('height', '100%')
 };
 
@@ -140,13 +140,13 @@ $('.all-cards').on('click', function() {
   showCards(Model.flashcards);
 });
 $('.fk-cards').on('click', function() {
-  showCards(fullyKnowArray);
+  showCards(Game.fullyKnowArray);
 });
 $('.kk-cards').on('click', function() {
-  showCards(kindaKnowArray);
+  showCards(Game.kindaKnowArray);
 });
 $('.dk-cards').on('click', function() {
-  showCards(dontKnowArray);
+  showCards(Game.dontKnowArray);
 });
 
 /** click handler to close overlay*/
@@ -361,9 +361,9 @@ function updateHud() {
   var fk = $('.fk-count');
   var kk = $('.kk-count');
   var dk = $('.dk-count');
-  fk.html('Fully Know: ' + fullyKnowArray.length + ' of ' + Model.flashcards.length);
-  kk.html('Kinda Know: ' + kindaKnowArray.length + ' of ' + Model.flashcards.length);
-  dk.html('Dont Know: ' + dontKnowArray.length + ' of ' + Model.flashcards.length);
+  fk.html('Fully Know: ' + Game.fullyKnowArray.length + ' of ' + Model.flashcards.length);
+  kk.html('Kinda Know: ' + Game.kindaKnowArray.length + ' of ' + Model.flashcards.length);
+  dk.html('Dont Know: ' + Game.dontKnowArray.length + ' of ' + Model.flashcards.length);
 }
 
 /**
@@ -489,9 +489,9 @@ function updateArrays() {
     }
   });
 
-  fullyKnowArray = fkArray;
-  kindaKnowArray = kkArray;
-  dontKnowArray = dkArray;
+  Game.fullyKnowArray = fkArray;
+  Game.kindaKnowArray = kkArray;
+  Game.dontKnowArray = dkArray;
 }
 
 /** @desc concatanates arrays of cards together based on user input*/
@@ -499,15 +499,15 @@ function generateDeck() {
   Game.cardDeck = [];
 
   if (Game.useDK) {
-    Game.cardDeck = Game.cardDeck.concat(dontKnowArray);
+    Game.cardDeck = Game.cardDeck.concat(Game.dontKnowArray);
   }
 
   if (Game.useFK) {
-    Game.cardDeck = Game.cardDeck.concat(fullyKnowArray);
+    Game.cardDeck = Game.cardDeck.concat(Game.fullyKnowArray);
   }
 
   if (Game.useKK) {
-    Game.cardDeck = Game.cardDeck.concat(kindaKnowArray);
+    Game.cardDeck = Game.cardDeck.concat(Game.kindaKnowArray);
   }
 
   Game.cardDeck = shuffle(Game.cardDeck);
