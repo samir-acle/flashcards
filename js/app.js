@@ -109,27 +109,22 @@ function setCurrentCard(card) {
 }
 
 function updateDisplay() {
-  $('.card-text').html(Game.currentCard.question);
-  updateHud();
+  if (!Game.onQuestion) {
+    $('.card-text').html(Game.currentCard.answer);
+    stopTime();
+    checkTime();
+    showButtons();
+    // updateAll();
+  } else {
+    $('.card-text').html(Game.currentCard.question);
+    Game.currentCard.setStartTime();
+    hideButtons();
+  }
 }
 
 function flipCard() {
-  if (Game.onQuestion) {
-    $('.card-text').html(Game.currentCard.answer);
     Game.onQuestion = !Game.onQuestion;
-    // $('.correct-button').show();
-    // $('.wrong-button').show();
-    showButtons();
-    Game.currentCard.setStopTime();
-    Game.currentCard.updateTime();
-    checkTime();
     updateAll();
-  } else {
-    $('.card-text').html(Game.currentCard.question);
-    Game.onQuestion = !Game.onQuestion;
-    hideButtons();
-    Game.currentCard.setStartTime();
-  }
 }
 
 function checkTime() {
@@ -164,11 +159,16 @@ $('.next').on('click', function(evt) {
   nextCard();
 });
 
-function nextCard() {
-  restoreFullyKnows();
+function stopTime() {
   Game.currentCard.setStopTime();
   Game.currentCard.updateTime();
-  updateBubbleSvg();
+}
+
+function nextCard() {
+  restoreFullyKnows();
+  stopTime();
+
+  // updateBubbleSvg();
 
   if (Game.cardIndex === Game.cardDeck.length - 1) {
     Game.cardIndex = 0;
@@ -448,6 +448,8 @@ function init() {
   initCards();
   updateArrays();
   generateDeck();
+  console.log(Game.cardIndex);
+  Game.cardIndex = 0;
   setCurrentCard(Game.cardDeck[Game.cardIndex]);
 }
 
@@ -514,6 +516,9 @@ function updateBubbleSvg() {
   var redMinRadius = 15;
   var greenMinRadius = 5;
   var yellowMinRadius = 10;
+  var redStepSize = 1;
+  var yellowStepSize = 3;
+  var greenStepSize = 5;
   //update
   var circles = Game.svgContainer.selectAll('circle').data(Model.flashcards);
 
@@ -525,17 +530,19 @@ function updateBubbleSvg() {
          })
       .transition()
          .attr('r', function(d,i){
-           var radius = maxRadius - d.viewCount * 3;
+           var radius;
            if(d.comfort === 'fully know'){
+             radius = maxRadius - d.viewCount * greenStepSize;
              return radius <= greenMinRadius ? greenMinRadius : radius;
            } else if(d.comfort === 'kinda know'){
+             radius = maxRadius - d.viewCount * yellowStepSize;
              return radius <= yellowMinRadius ? yellowMinRadius : radius;
            } else {
+             radius = maxRadius - d.viewCount *redStepSize;
              return radius <= redMinRadius ? redMinRadius : radius;
            }
          })
          .duration(function(d,i){
-          //  return d.totalTime;
             return d.lastTurnTime;
          })
          .attr('fill', function(d){
@@ -562,12 +569,16 @@ function updateBubbleSvg() {
          })
          .attr('fill', 'red');
 
+  circles.on('click', function(d) {
+    setCurrentCard(d);
+  });
+
   //exit
   circles.exit().remove();
 }
 
 function resetGame() {
-  generateDeck();
+  window.location.reload();
 }
 
 $('.reset').on('click', resetGame);
