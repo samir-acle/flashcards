@@ -387,16 +387,19 @@ function createTicks(className, views) {
 
 $('.fully-know').on('click', function() {
   Game.currentCard.setAsFullyKnow();
+  Game.onQuestion = true;
   updateAll();
   nextCard();
 });
 $('.kinda-know').on('click', function() {
   Game.currentCard.setAsKindaKnow();
+  Game.onQuestion = true;
   updateAll();
   nextCard();
 });
 $('.dont-know').on('click', function() {
   Game.currentCard.setAsDoNotKnow();
+  Game.onQuestion = true;
   updateAll();
   nextCard();
 });
