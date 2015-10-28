@@ -8,6 +8,7 @@
  *
  */
 
+//TODO: fix functionality when all cards have been deleted
 'use strict';
 
 /** Object to hold data for all of the flashcards*/
@@ -134,7 +135,13 @@ $('.add').on('click', showEditMode);
 $('#close-form').on('click', hideEditMode);
 
 /** click handler to remove card*/
-$('.delete').on('click', removeCard);
+$('.delete').on('click', function() {
+  if (Model.flashcards.length === 1) {
+    alert('only 1 flashcard is remaining. please create new cards before deleting this one');
+  } else {
+    removeCard();
+  }
+});
 
 /** click handlers to show different cards*/
 $('.all-cards').on('click', function() {
@@ -340,13 +347,13 @@ function createNewCard(question, answer) {
   Model.flashcards.push(newCard);
   updateArrays();
   updateDisplay();
-
 }
 
 /** @desc makes comfort buttons visible or hidden on page*/
 function showButtons() {
   $('.choices').show();
 }
+
 function hideButtons() {
   $('.choices').hide();
 }
@@ -355,6 +362,7 @@ function hideButtons() {
 function showEditMode() {
   $('form').show();
 }
+
 function hideEditMode() {
   $('form').hide();
 }
