@@ -189,7 +189,10 @@ $('.generate').on('click', function(evt) {
 $('.card-menu-icon').on('click', toggleMenuBar);
 
 /** click handler for stats bar*/
-$('.stats-button').on('click', toggleStatsBar);
+$('.stats-button').on('click', function() {
+  setStats();
+  toggleStatsBar();
+});
 
 /** click handler to reset game*/
 $('.reset').on('click', resetGame);
