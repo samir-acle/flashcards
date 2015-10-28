@@ -31,3 +31,6 @@ Each flash card is represented by a circle on the left side of the screen. These
 * [Polymer](https://www.polymer-project.org/1.0/)
 * [Polymer - paper-input element](https://elements.polymer-project.org/elements/paper-input)
 * [Normalize.css](https://necolas.github.io/normalize.css/)
+
+##User Stories
+[Link to Picture of Trello Board](http://imgur.com/cEvMIhf)
