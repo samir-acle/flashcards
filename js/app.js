@@ -88,6 +88,125 @@ var Game = {
   svgContainer: d3.select('.bubbles').append('svg').attr('width', '100%').attr('height', '100%')
 };
 
+/**
+ * EVENT HANDLERS
+ */
+/** click handler to flip card*/
+$('.flip').on('click', function(evt) {
+  evt.preventDefault();
+  flipCard();
+  updateDisplay();
+});
+
+/** click handler for keypresses*/
+$(document).on('keyup', function(evt) {
+  if (evt.keyCode === 38 || evt.keyCode === 40) {
+    evt.preventDefault();
+    flipCard();
+    updateDisplay();
+  } else if (evt.keyCode === 39) {
+    evt.preventDefault();
+    nextCard();
+    updateDisplay();
+  }
+});
+
+/** click handler to switch cards*/
+$('.next').on('click', function(evt) {
+  evt.preventDefault();
+  nextCard();
+  updateDisplay();
+});
+
+/** click handler to create new card*/
+$('.submit').on('click', function(evt) {
+  evt.preventDefault();
+  var question = $('#quest').val();
+  var answer = $('#answer').val();
+  $('#quest').val('');
+  $('#answer').val('');
+  createNewCard(question, answer);
+});
+
+/** click handler for create new card form*/
+$('.add').on('click', showEditMode);
+$('#close-form').on('click', hideEditMode);
+
+/** click handler to remove card*/
+$('.delete').on('click', removeCard);
+
+/** click handlers to show different cards*/
+$('.all-cards').on('click', function() {
+  showCards(Model.flashcards);
+});
+$('.fk-cards').on('click', function() {
+  showCards(fullyKnowArray);
+});
+$('.kk-cards').on('click', function() {
+  showCards(kindaKnowArray);
+});
+$('.dk-cards').on('click', function() {
+  showCards(dontKnowArray);
+});
+
+/** click handler to close overlay*/
+$('#close-all').on('click', removeOverlay);
+
+/** click handlers for comfort buttons*/
+$('.fully-know').on('click', function() {
+  Game.currentCard.setAsFullyKnow();
+  updateArrays();
+  updateDisplay();
+});
+$('.kinda-know').on('click', function() {
+  Game.currentCard.setAsKindaKnow();
+  updateArrays();
+  updateDisplay();
+});
+$('.dont-know').on('click', function() {
+  Game.currentCard.setAsDoNotKnow();
+  updateArrays();
+  updateDisplay();
+});
+
+/** click handler to create deck of cards*/
+$('.generate').on('click', function(evt) {
+  evt.preventDefault();
+  var fkCheck = $('#fk:checked').val();
+  var kkCheck = $('#kk:checked').val();
+  var dkCheck = $('#dk:checked').val();
+
+  Game.useFK = fkCheck ? true : false;
+  Game.useKK = kkCheck ? true : false;
+  Game.useDK = dkCheck ? true : false;
+
+  generateDeck();
+  resetDeck();
+});
+
+/** click handler for close icon*/
+$('.card-menu-icon').on('click', toggleMenuBar);
+
+/** click handler for stats bar*/
+$('.stats-button').on('click', toggleStatsBar);
+
+/** click handler to reset game*/
+$('.reset').on('click', resetGame);
+
+/**
+ * FUNCTIONS
+ */
+/** @desc IEFE to initialize app*/
+(function init() {
+  initCards();
+  updateArrays();
+  generateDeck();
+  console.log(Game.cardIndex);
+  Game.cardIndex = 0;
+  setCurrentCard(Game.cardDeck[Game.cardIndex]);
+  updateDisplay();
+})();
+
 /** @desc creates placeholder flashcards */
 function initCards() {
   Model.flashcards.push(new FlashCard('teacher',
@@ -169,33 +288,6 @@ function restoreFullyKnows() {
   });
 }
 
-/** click handler to flip card*/
-$('.flip').on('click', function(evt) {
-  evt.preventDefault();
-  flipCard();
-  updateDisplay();
-});
-
-/** click handler for keypresses*/
-$(document).on('keyup', function(evt) {
-  if (evt.keyCode === 38 || evt.keyCode === 40) {
-    evt.preventDefault();
-    flipCard();
-    updateDisplay();
-  } else if (evt.keyCode === 39) {
-    evt.preventDefault();
-    nextCard();
-    updateDisplay();
-  }
-});
-
-/** click handler to switch cards*/
-$('.next').on('click', function(evt) {
-  evt.preventDefault();
-  nextCard();
-  updateDisplay();
-});
-
 /** @desc sets stop time for card and calculates time viewed */
 function stopTime() {
   Game.currentCard.setStopTime();
@@ -225,16 +317,6 @@ function nextCard() {
 
 }
 
-/** click handler to create new card*/
-$('.submit').on('click', function(evt) {
-  evt.preventDefault();
-  var question = $('#quest').val();
-  var answer = $('#answer').val();
-  $('#quest').val('');
-  $('#answer').val('');
-  createNewCard(question, answer);
-});
-
 /**
  * @desc creates new instance of FlashCard with question and answer properties
  * as defined by the User
@@ -257,10 +339,6 @@ function hideButtons() {
   $('.choices').hide();
 }
 
-/** click handler for create new card form*/
-$('.add').on('click', showEditMode);
-$('#close-form').on('click', hideEditMode);
-
 /** @desc toggles visibility of form to add new card*/
 function showEditMode() {
   $('form').show();
@@ -268,9 +346,6 @@ function showEditMode() {
 function hideEditMode() {
   $('form').hide();
 }
-
-/** click handler to remove card*/
-$('.delete').on('click', removeCard);
 
 /** @desc deletes currently displayed flashcard*/
 function removeCard() {
@@ -290,20 +365,6 @@ function updateHud() {
   kk.html('Kinda Know: ' + kindaKnowArray.length + ' of ' + Model.flashcards.length);
   dk.html('Dont Know: ' + dontKnowArray.length + ' of ' + Model.flashcards.length);
 }
-
-/** click handlers to show different cards*/
-$('.all-cards').on('click', function() {
-  showCards(Model.flashcards);
-});
-$('.fk-cards').on('click', function() {
-  showCards(fullyKnowArray);
-});
-$('.kk-cards').on('click', function() {
-  showCards(kindaKnowArray);
-});
-$('.dk-cards').on('click', function() {
-  showCards(dontKnowArray);
-});
 
 /**
  * @desc opens overlay on screen displaying both sides of flashcards
@@ -343,9 +404,6 @@ function showCards(array) {
 
   $('body').append(container);
 }
-
-/** click handler to close overlay*/
-$('#close-all').on('click', removeOverlay);
 
 /** @desc deletes overlay from DOM*/
 function removeOverlay() {
@@ -415,24 +473,6 @@ function createTicks(className, views) {
     .duration(750);
 }
 
-/** click handlers for comfort buttons*/
-$('.fully-know').on('click', function() {
-  Game.currentCard.setAsFullyKnow();
-  updateArrays();
-  updateDisplay();
-});
-$('.kinda-know').on('click', function() {
-  Game.currentCard.setAsKindaKnow();
-  updateArrays();
-  updateDisplay();
-});
-$('.dont-know').on('click', function() {
-  Game.currentCard.setAsDoNotKnow();
-  updateArrays();
-  updateDisplay();
-});
-
-
 /** @desc creates arrays holding the different comfort level cards */
 function updateArrays() {
   var fkArray = [];
@@ -477,32 +517,6 @@ function generateDeck() {
   }
 }
 
-/** @desc IEFE to initialize app*/
-(function init() {
-  initCards();
-  updateArrays();
-  generateDeck();
-  console.log(Game.cardIndex);
-  Game.cardIndex = 0;
-  setCurrentCard(Game.cardDeck[Game.cardIndex]);
-  updateDisplay();
-})();
-
-/** click handler to create deck of cards*/
-$('.generate').on('click', function(evt) {
-  evt.preventDefault();
-  var fkCheck = $('#fk:checked').val();
-  var kkCheck = $('#kk:checked').val();
-  var dkCheck = $('#dk:checked').val();
-
-  Game.useFK = fkCheck ? true : false;
-  Game.useKK = kkCheck ? true : false;
-  Game.useDK = dkCheck ? true : false;
-
-  generateDeck();
-  resetDeck();
-});
-
 /** @desc changes currently displayed card to the first in the deck*/
 function resetDeck() {
   Game.cardIndex = 0;
@@ -517,16 +531,10 @@ function deckEmpty() {
   Game.deckEmpty = true;
 }
 
-/** click handler for close icon*/
-$('.card-menu-icon').on('click', toggleMenuBar);
-
 /** @desc toggles position of menu bar*/
 function toggleMenuBar() {
   $('.menu').toggleClass('offscreen');
 }
-
-/** click handler for stats bar*/
-$('.stats-button').on('click', toggleStatsBar);
 
 /** @desc toggles visibility of stats bar*/
 function toggleStatsBar() {
@@ -646,4 +654,3 @@ function updateBubbleSvg() {
 function resetGame() {
   window.location.reload();
 }
-$('.reset').on('click', resetGame);
