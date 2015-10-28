@@ -1,12 +1,29 @@
+/**
+ * FlashCards: The Web App
+ * created by Samir Mehta
+ *
+ * This app was created to fulfill the first Project requirement while a student
+ * in the WDI program at General Assembly in Washington, DC. The prompt was to
+ * create a flash cards app.
+ *
+ */
+
 'use strict';
 
 var fullyKnowArray = [];
 var kindaKnowArray = [];
 var dontKnowArray = [];
+/** Object to hold data for all of the flashcards*/
 var Model = {
   flashcards: []
 };
 
+/**
+ * Represents a FlashCard
+ * @constructor
+ * @param {string} question - the question or prompt
+ * @param {string} answer - the answer to the above question
+ */
 var FlashCard = function(question, answer) {
   this.question = question;
   this.answer = answer;
@@ -17,6 +34,7 @@ var FlashCard = function(question, answer) {
   this.comfort = 'do not know';
 };
 
+/** sets methods of class FlashCard */
 FlashCard.prototype = {
   constructor: FlashCard,
   setAsWrong: function() {
@@ -53,7 +71,7 @@ FlashCard.prototype = {
   }
 };
 
-
+/** creates Game object to hold game state data*/
 var Game = {
   currentCardIndex: 0,
   onQuestion: true,
@@ -70,6 +88,7 @@ var Game = {
   svgContainer: d3.select('.bubbles').append('svg').attr('width', '100%').attr('height', '100%')
 };
 
+/** @desc creates placeholder flashcards */
 function initCards() {
   Model.flashcards.push(new FlashCard('teacher',
     'lao shi'));
@@ -81,29 +100,39 @@ function initCards() {
   Model.flashcards.push(new FlashCard('goodbye', 'zai jian'));
 }
 
+/**
+ * @desc changes current flashcard
+ * @param {object} card - flashcard object
+ */
 function setCurrentCard(card) {
   Game.currentCard = card;
   Game.currentCard.setStartTime();
   Game.onQuestion = true;
 }
 
+/**
+ * @desc updates everything on the screen to match the current flash card
+ */
 function updateDisplay() {
   if (!Game.onQuestion) {
     $('.card-text').html(Game.currentCard.answer);
     console.log('this is from upd display');
-    checkTime();
+    checkTime(); //if on card too long, cannot choose 'fully knows'
     showButtons();
+    setStats();
   } else {
     $('.card-text').html(Game.currentCard.question);
     Game.currentCard.setStartTime();
     hideButtons();
   }
 
-  setStats();
   updateHud();
   updateBubbleSvg();
 }
 
+/**
+ * @desc sets boolean to opposite to represent either front or back of the card
+ */
 function flipCard() {
   if (!Game.deckEmpty) {
     Game.onQuestion = !Game.onQuestion;
@@ -115,12 +144,14 @@ function flipCard() {
   }
 }
 
+/** @desc limit comfort choices depending on time viewed */
 function checkTime() {
   if (Game.currentCard.lastTurnTime > 5000) {
     preventFullyKnows();
   }
 }
 
+/** @desc prevents clicking on 'fully knows' button */
 function preventFullyKnows() {
   var fkButton = $('.fully-know');
   fkButton.css({
@@ -129,6 +160,7 @@ function preventFullyKnows() {
   });
 }
 
+/** @desc restores click functionality on 'fully know' button */
 function restoreFullyKnows() {
   var fkButton = $('.fully-know');
   fkButton.css({
@@ -137,13 +169,14 @@ function restoreFullyKnows() {
   });
 }
 
-
+/** click handler to flip card*/
 $('.flip').on('click', function(evt) {
   evt.preventDefault();
   flipCard();
   updateDisplay();
 });
 
+/** click handler for keypresses*/
 $(document).on('keyup', function(evt) {
   if (evt.keyCode === 38 || evt.keyCode === 40) {
     evt.preventDefault();
@@ -156,17 +189,20 @@ $(document).on('keyup', function(evt) {
   }
 });
 
+/** click handler to switch cards*/
 $('.next').on('click', function(evt) {
   evt.preventDefault();
   nextCard();
   updateDisplay();
 });
 
+/** @desc sets stop time for card and calculates time viewed */
 function stopTime() {
   Game.currentCard.setStopTime();
   Game.currentCard.updateTime();
 }
 
+/** @desc switches current flash card*/
 function nextCard() {
   if (!Game.deckEmpty) {
     restoreFullyKnows();
@@ -189,6 +225,7 @@ function nextCard() {
 
 }
 
+/** click handler to create new card*/
 $('.submit').on('click', function(evt) {
   evt.preventDefault();
   var question = $('#quest').val();
@@ -198,38 +235,44 @@ $('.submit').on('click', function(evt) {
   createNewCard(question, answer);
 });
 
+/**
+ * @desc creates new instance of FlashCard with question and answer properties
+ * as defined by the User
+ * @param {string} question - the question or prompt
+ * @param {string} answer - the answer to the above question
+ */
 function createNewCard(question, answer) {
   var newCard = new FlashCard(question, answer);
   Model.flashcards.push(newCard);
   updateArrays();
-
   updateDisplay();
 
 }
 
+/** @desc makes comfort buttons visible or hidden on page*/
 function showButtons() {
-
   $('.choices').show();
 }
-
 function hideButtons() {
-
   $('.choices').hide();
 }
 
+/** click handler for create new card form*/
 $('.add').on('click', showEditMode);
 $('#close-form').on('click', hideEditMode);
 
+/** @desc toggles visibility of form to add new card*/
 function showEditMode() {
   $('form').show();
 }
-
 function hideEditMode() {
   $('form').hide();
 }
 
+/** click handler to remove card*/
 $('.delete').on('click', removeCard);
 
+/** @desc deletes currently displayed flashcard*/
 function removeCard() {
   var index = Model.flashcards.indexOf(Game.currentCard);
   Model.flashcards.splice(index, 1);
@@ -238,7 +281,7 @@ function removeCard() {
   updateDisplay();
 }
 
-
+/** @desc updates top of screen to display correct count of each type of card*/
 function updateHud() {
   var fk = $('.fk-count');
   var kk = $('.kk-count');
@@ -248,22 +291,24 @@ function updateHud() {
   dk.html('Dont Know: ' + dontKnowArray.length + ' of ' + Model.flashcards.length);
 }
 
+/** click handlers to show different cards*/
 $('.all-cards').on('click', function() {
   showCards(Model.flashcards);
 });
-
 $('.fk-cards').on('click', function() {
   showCards(fullyKnowArray);
 });
-
 $('.kk-cards').on('click', function() {
   showCards(kindaKnowArray);
 });
-
 $('.dk-cards').on('click', function() {
   showCards(dontKnowArray);
 });
 
+/**
+ * @desc opens overlay on screen displaying both sides of flashcards
+ * @param {array} array - holds cards to be displayed
+ */
 function showCards(array) {
   if ($('.stats-container').css('display') === 'block') {
     toggleStatsBar();
@@ -299,12 +344,15 @@ function showCards(array) {
   $('body').append(container);
 }
 
+/** click handler to close overlay*/
 $('#close-all').on('click', removeOverlay);
 
+/** @desc deletes overlay from DOM*/
 function removeOverlay() {
   $('.container').remove();
 }
 
+/** @desc updates stats bar with most recent information*/
 function setStats() {
   $('#stats').empty();
   var statsContainer = $('#stats');
@@ -322,6 +370,11 @@ function setStats() {
   createTicks('.stat-views', Game.currentCard.viewCount);
 }
 
+/**
+ * @desc creates tick marks to show # of views
+ * @param {string} className
+ * @param {number} views
+ */
 function createTicks(className, views) {
   var viewsArray = [];
   var x = 5;
@@ -329,6 +382,7 @@ function createTicks(className, views) {
   var y2 = 30;
   var maxX = views < 20 ? 100 : x * views;
 
+  /** different values for every 5th tick to make it diagonl*/
   for (var i = 0; i < views; i++) {
     if (i % 5 === 4) {
       viewsArray.push([5, x, y1, y2]);
@@ -337,6 +391,7 @@ function createTicks(className, views) {
     }
   }
 
+  /** uses D3 methods to create svg element and set attributes*/
   var svgContainer = d3.select(className).append('svg')
     .attr('width', maxX)
     .attr('height', 30);
@@ -353,31 +408,32 @@ function createTicks(className, views) {
       return d[3];
     })
     .attr('stroke-width', 2)
-    .attr('stroke', 'black');
+    .attr('stroke', 'black')
+    .style('opacity', 0)
+    .transition()
+    .style('opacity', 1)
+    .duration(750);
 }
 
+/** click handlers for comfort buttons*/
 $('.fully-know').on('click', function() {
   Game.currentCard.setAsFullyKnow();
-
   updateArrays();
   updateDisplay();
-
 });
 $('.kinda-know').on('click', function() {
   Game.currentCard.setAsKindaKnow();
-
   updateArrays();
   updateDisplay();
 });
 $('.dont-know').on('click', function() {
   Game.currentCard.setAsDoNotKnow();
-
   updateArrays();
   updateDisplay();
 });
 
 
-
+/** @desc creates arrays holding the different comfort level cards */
 function updateArrays() {
   var fkArray = [];
   var kkArray = [];
@@ -398,6 +454,7 @@ function updateArrays() {
   dontKnowArray = dkArray;
 }
 
+/** @desc concatanates arrays of cards together based on user input*/
 function generateDeck() {
   Game.cardDeck = [];
 
@@ -420,7 +477,8 @@ function generateDeck() {
   }
 }
 
-function init() {
+/** @desc IEFE to initialize app*/
+(function init() {
   initCards();
   updateArrays();
   generateDeck();
@@ -428,10 +486,9 @@ function init() {
   Game.cardIndex = 0;
   setCurrentCard(Game.cardDeck[Game.cardIndex]);
   updateDisplay();
-}
+})();
 
-init();
-
+/** click handler to create deck of cards*/
 $('.generate').on('click', function(evt) {
   evt.preventDefault();
   var fkCheck = $('#fk:checked').val();
@@ -446,31 +503,42 @@ $('.generate').on('click', function(evt) {
   resetDeck();
 });
 
+/** @desc changes currently displayed card to the first in the deck*/
 function resetDeck() {
   Game.cardIndex = 0;
   setCurrentCard(Game.cardDeck[Game.cardIndex]);
   updateDisplay();
 }
 
+/** @desc displays message and toggles empty deck boolean*/
 function deckEmpty() {
   $('.card-text').html('No more cards in deck, please generate a new deck below.');
   hideButtons();
   Game.deckEmpty = true;
 }
 
+/** click handler for close icon*/
 $('.card-menu-icon').on('click', toggleMenuBar);
 
+/** @desc toggles position of menu bar*/
 function toggleMenuBar() {
   $('.menu').toggleClass('offscreen');
 }
 
+/** click handler for stats bar*/
 $('.stats-button').on('click', toggleStatsBar);
 
+/** @desc toggles visibility of stats bar*/
 function toggleStatsBar() {
   $('.stats-container').toggle();
 }
 
-// below code written following post on http://bost.ocks.org/mike/shuffle/
+/**
+ * below code written following post on http://bost.ocks.org/mike/shuffle/
+ * @desc shuffles items within an array
+ * @param {array} array - array to be shuffled
+ * @returns shuffled array
+ */
 function shuffle(array) {
   var shuffledArray = array;
   var m = shuffledArray.length;
@@ -487,7 +555,10 @@ function shuffle(array) {
   return shuffledArray;
 }
 
-//followd tutorials at http://bl.ocks.org/mbostock/3808234
+/**
+ * followed tutorials at http://bl.ocks.org/mbostock/3808234
+ * @desc creates and updates the circe svgs corresponding to flashcards
+ */
 function updateBubbleSvg() {
 
   var maxRadius = 30;
@@ -498,7 +569,7 @@ function updateBubbleSvg() {
   var yellowStepSize = 3;
   var greenStepSize = 5;
 
-  //update
+  /** updates circles that have already been created*/
   var circles = Game.svgContainer.selectAll('circle').data(Model.flashcards);
 
   circles.attr('cx', function(d, i) {
@@ -538,7 +609,7 @@ function updateBubbleSvg() {
       }
     });
 
-  //enter
+  /** creates new circle elements for new flashcards(data) */
   circles.enter().append('circle')
     .attr('cx', function(d, i) {
       return i % 5 * maxRadius * 2 + maxRadius;
@@ -562,7 +633,7 @@ function updateBubbleSvg() {
     updateDisplay();
   });
 
-  //exit
+  /** removes circles for flashcards (data) that has been deleted*/
   circles.exit()
     .transition()
     .attr('cy', 200)
@@ -571,8 +642,8 @@ function updateBubbleSvg() {
     .remove();
 }
 
+/** @desc reloads screen to reset game*/
 function resetGame() {
   window.location.reload();
 }
-
 $('.reset').on('click', resetGame);
