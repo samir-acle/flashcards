@@ -6,6 +6,7 @@
 body
 {
     background: LemonChiffon;
+    overflow-x: hidden;
 }
 
 .board

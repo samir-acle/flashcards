@@ -143,6 +143,19 @@ $('.flip').on('click', function(evt) {
   flipCard();
   updateDisplay();
 });
+
+$(document).on('keyup', function(evt) {
+  if (evt.keyCode === 38 || evt.keyCode === 40) {
+    evt.preventDefault();
+    flipCard();
+    updateDisplay();
+  } else if (evt.keyCode === 39) {
+    evt.preventDefault();
+    nextCard();
+    updateDisplay();
+  }
+});
+
 $('.next').on('click', function(evt) {
   evt.preventDefault();
   nextCard();
