@@ -238,3 +238,11 @@ h2 {
   bottom: 0;
   right: 0;
 }
+
+circle:hover,
+.check:hover,
+.card-menu-icon:hover,
+.close:hover,
+.outer-div:hover {
+  cursor: pointer;
+}
