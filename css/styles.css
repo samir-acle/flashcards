@@ -232,3 +232,9 @@ h2 {
 #dk {
   margin-top: 3px;
 }
+
+.reset {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
