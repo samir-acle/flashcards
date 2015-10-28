@@ -1,0 +1,27 @@
+{
+  "name": "P1-FlashCards",
+  "authors": [
+    "Samir Mehta <sammehta88@gmail.com>"
+  ],
+  "description": "Flash Cards WebApp",
+  "main": "index.html",
+  "moduleType": [],
+  "keywords": [
+    "flash",
+    "cards"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "normalize-css": "normalize.css#~3.0.3",
+    "paper-input": "PolymerElements/paper-input#~1.0.16"
+  }
+}
