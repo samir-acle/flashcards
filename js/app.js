@@ -554,6 +554,8 @@ function shuffle(array) {
 //TODO: make bubbles outline number of flashcards
 //TODO: change it up depending on the comfort level
 
+
+//followd tutorials at http://bl.ocks.org/mbostock/3808234
 function updateBubbleSvg() {
   //if loop to only create first time or sep function
   var maxRadius = 30;
@@ -608,14 +610,19 @@ function updateBubbleSvg() {
          .attr('cx', function(d,i){
            return i % 5 * maxRadius * 2 + maxRadius;
          })
-         .attr('cy', function(d,i){
-           return Math.floor(i / 5) * maxRadius * 2 + maxRadius;
-         })
+         .attr('cy', 200)
          .attr('r', function(d,i){
            var radius = maxRadius - d.viewCount * 5;
            return radius <= 0 ? 5 : radius;
          })
-         .attr('fill', 'red');
+         .attr('fill', 'red')
+         .style('opacity', 0)
+      .transition()
+         .style('opacity', 1)
+         .attr('cy', function(d,i){
+           return Math.floor(i / 5) * maxRadius * 2 + maxRadius;
+         })
+         .duration(750);
 
   circles.on('click', function(d) {
     setCurrentCard(d);
@@ -623,7 +630,12 @@ function updateBubbleSvg() {
   });
 
   //exit
-  circles.exit().remove();
+  circles.exit()
+      .transition()
+         .attr('cy', 200)
+         .style('opacity', 0)
+         .duration(750)
+         .remove();
 }
 
 function resetGame() {
