@@ -1,248 +1,319 @@
-* {
-  box-sizing: border-box;
+*
+{
+    box-sizing: border-box;
 }
 
-body {
-  background: LemonChiffon;
+body
+{
+    background: LemonChiffon;
 }
 
-.board {
-  max-width: 960px;
-  height: 80vh;
-  position: relative;
-  margin: 0 auto;
-  background-color: #DCDCDC;
-  padding-top: 25px;
+.board
+{
+    position: relative;
+
+    max-width: 960px;
+    height: 80vh;
+    margin: 0 auto;
+    padding-top: 25px;
+
+    background-color: #dcdcdc;
 }
 
-.card {
-  width: 200px;
-  height: 200px;
-  border: 2px solid green;
-  position: relative;
-  margin: 0 auto;
-  font-size: 20px;
-  text-align: center;
-  background: white;
+.card
+{
+    font-size: 20px;
+
+    position: relative;
+
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+
+    text-align: center;
+
+    border: 2px solid green;
+    background: white;
 }
-/*.flip {
-  position: absolute;
-  top: 0;
-  right: 0;
-}*/
 
 .correct-button,
-.wrong-button {
-  display: none;
+.wrong-button
+{
+    display: none;
 }
 
-.choices {
-  display: none;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  background: rgba(141,212,207,0.2);
+.choices
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    display: none;
+
+    background: rgba(141,212,207,.2);
 }
 
-.add-card {
-  display: none;
-  position: absolute;
-  bottom: 0;
-  left:0;
-  width: 250px;
-  border: 2px solid black;
-  background: white;
+.add-card
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    display: none;
+
+    width: 250px;
+
+    border: 2px solid black;
+    background: white;
 }
 
-.close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: rgba(0,0,0,0);
-  font-size: 24px;
+.close
+{
+    font-size: 24px;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    background: rgba(0,0,0,0);
 }
 
-.container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: rgba(111, 2, 144, 0.3);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
+.container
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    display: flex;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(111, 2, 144, .3);
+
+    flex-flow: row wrap;
+    justify-content: space-between;
 }
 
-.outer-div {
-  width: 25%;
-  height: 100px;
-  flex-shrink: 0;
-  flex-grow: 1;
-  margin: 20px;
-  background: rgba(0, 24, 24, 0.8);
-  color: white;
+.outer-div
+{
+    width: 25%;
+    height: 100px;
+    margin: 20px;
+
+    color: white;
+    background: rgba(0, 24, 24, .8);
+
+    flex-shrink: 0;
+    flex-grow: 1;
 }
 
-.question {
-  border-bottom: 2px dashed gray;
-  padding-top: 10px;
+.question
+{
+    padding-top: 10px;
+
+    border-bottom: 2px dashed gray;
 }
 
-.answer {
-  padding-top: 20px;
+.answer
+{
+    padding-top: 20px;
 }
 
 .question,
-.answer {
-  text-align: center;
-  height: 50%;
+.answer
+{
+    height: 50%;
+
+    text-align: center;
 }
 
-.stats-container {
-  width: 300px;
-  height: 200px;
-  position: absolute;
-  padding-top: 25px;
-  right: 10px;
-  top: 0;
-  display: none;
+.stats-container
+{
+    position: absolute;
+    top: 0;
+    right: 10px;
+
+    display: none;
+
+    width: 300px;
+    height: 200px;
+    padding-top: 25px;
 }
 
-.card-menu-icon {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: gray;
-  opacity: 0.5;
-  font-size: 36px;
-  height: 100%;
-  transition: opacity 0.35s ease;
+.card-menu-icon
+{
+    font-size: 36px;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    height: 100%;
+
+    transition: opacity .35s ease;
+
+    opacity: .5;
+    background: gray;
 }
 
-.card-menu-icon:hover {
-  opacity: 1.0;
+.card-menu-icon:hover
+{
+    opacity: 1.0;
 }
 
-.hud {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  max-width: 960px;
-  margin: 0 auto;
-  height: 25px;
+.hud
+{
+    display: flex;
+
+    max-width: 960px;
+    height: 25px;
+    margin: 0 auto;
+
+    flex-flow: row wrap;
+    justify-content: center;
 }
-.counters {
-  /*display: inline-block;*/
-  flex-shrink: 0;
-  flex-grow: 1;
-  padding: 5px 15px;
-  height: 100%;
-  margin: 0;
-  text-align: center;
+.counters
+{
+    height: 100%;
+    margin: 0;
+    padding: 5px 15px;
+
+    text-align: center;
+    /*display: inline-block;*/
+
+    flex-shrink: 0;
+    flex-grow: 1;
 }
 
 .fk-count,
-.fully-know {
-  background: green;
+.fully-know
+{
+    background: green;
 }
 
 .kk-count,
-.kinda-know {
-  background: yellow;
+.kinda-know
+{
+    background: yellow;
 }
 
 .dk-count,
-.dont-know {
-  background: red;
+.dont-know
+{
+    background: red;
 }
 
-h2 {
-  text-align: center;
-  padding: 0;
-  margin: 0;
-  font-size: 20px;
+h2
+{
+    font-size: 20px;
+
+    margin: 0;
+    padding: 0;
+
+    text-align: center;
 }
 
-.block {
-  display: block;
-  margin: 10px;
+.block
+{
+    display: block;
+
+    margin: 10px;
 }
 
-.bubbles {
-  height: 100%;
-  position: absolute;
-  width: calc(50% - 100px);
-  top: 0;
-  left: 0;
-  padding-top: 25px;
+.bubbles
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    height: 100%;
+    padding-top: 25px;
 }
 
-.buttons {
-  width: 50%;
-  position: relative;
-  top: 100px;
-  left: 37.5%;
+.buttons
+{
+    position: relative;
+    top: 100px;
+    left: 37.5%;
+
+    width: 50%;
 }
 
 .next,
-.flip {
-  width: 50%;
-  margin: 0 auto;
+.flip
+{
+    width: 50%;
+    margin: 0 auto;
 }
 
-.menu {
-  position: absolute;
-  width: 300px;
-  top: 25px;
-  right: 0;
-  height: 80vh;
-  font-size: 12px;
-  transition: all 1s ease;
-  background: #564F4F;
+.menu
+{
+    font-size: 12px;
+
+    position: absolute;
+    top: 25px;
+    right: 0;
+
+    width: 300px;
+    height: 80vh;
+
+    transition: all 1s ease;
+
+    background: #564f4f;
 }
 
-.offscreen {
-  transform: translateX(300px);
+.offscreen
+{
+    transform: translateX(300px);
 }
 
-.menu-buttons {
-  width: 100%;
-  height: 45px;
+.menu-buttons
+{
+    width: 100%;
+    height: 45px;
 }
 
-.stat {
-  font-size: 16px;
+.stat
+{
+    font-size: 16px;
 }
 
-.decks {
-  width: 960px;
-  margin: 0 auto;
-  display: flex;
-  flex-flow: nowrap row;
-  justify-content: center;
+.decks
+{
+    display: flex;
+
+    width: 960px;
+    margin: 0 auto;
+
+    flex-flow: nowrap row;
+    justify-content: center;
 }
 
-.check-label {
-  padding: 3px 10px 0 3px;
+.check-label
+{
+    padding: 3px 10px 0 3px;
 }
 
 #fk,
 #kk,
-#dk {
-  margin-top: 3px;
+#dk
+{
+    margin-top: 3px;
 }
 
-.reset {
-  position: absolute;
-  bottom: 0;
-  right: 0;
+.reset
+{
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }
 
 circle:hover,
 .check:hover,
 .card-menu-icon:hover,
 .close:hover,
-.outer-div:hover {
-  cursor: pointer;
+.outer-div:hover
+{
+    cursor: pointer;
 }
