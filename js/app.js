@@ -115,6 +115,7 @@ $(document).on('keyup', function(evt) {
 $('.next').on('click', function(evt) {
   evt.preventDefault();
   nextCard();
+  setStats();
   updateDisplay();
 });
 
