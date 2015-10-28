@@ -587,7 +587,11 @@ function updateBubbleSvg() {
            }
          })
          .duration(function(d,i){
+           if (d.lastTurnTime < 5000) {
             return d.lastTurnTime;
+          } else {
+            return 5000;
+          }
          })
          .attr('fill', function(d){
            if (d.comfort === 'fully know'){
