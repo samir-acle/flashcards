@@ -241,15 +241,10 @@ function hideEditMode() {
 $('.delete').on('click', removeCard);
 
 function removeCard() {
-  var currentCard = Game.currentCard;
-  if(currentCard.hasViewed) {
-    var lastAnswer = currentCard.lastAnswer;
-    updateCounters(lastAnswer, -1);
-;  }
   var index = Model.flashcards.indexOf(Game.currentCard);
   Model.flashcards.splice(index,1);
   nextCard();
-  updateHud();
+  updateAll();
 }
 
 // function updateCounters(string, change) {
