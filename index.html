@@ -21,6 +21,11 @@
 			<div id='card' class='card'>
 				<p class='card-text'></p>
 				<div class='card-menu-icon'>&equiv;</div>
+				<div class='choices'>
+					<button class='fully-know block'>fully know</button>
+					<button class='kinda-know block'>kinda know</button>
+					<button class='dont-know block'>dont know</button>
+				</div>
 			</div>
 			<div class='stats-container'>
 				<h2>STATS</h2>
@@ -30,31 +35,29 @@
 			<div class='buttons'>
 				<button class='next'>NEXT</button>
 				<button class='flip'>FLIP</button>
-				<button class='add'>Add Card</button>
-				<button class='delete'>Delete Card</button>
-				<button class="all-cards">See All Flash Cards</button>
-				<button class="fk-cards">See Fully Know Cards</button>
-				<button class="kk-cards">See Kinda Know Cards</button>
-				<button class="dk-cards">See Dont Know Cards</button>
 		  </div>
-			<div class='choices'>
-				<button class='fully-know block'>fully know</button>
-				<button class='kinda-know block'>kinda know</button>
-				<button class='dont-know block'>dont know</button>
-			</div>
+		</div>
+		<div class='menu offscreen'>
+			<button class='add menu-buttons'>Add Card</button>
+			<button class='delete menu-buttons'>Delete Card</button>
+			<button class="all-cards menu-buttons">See All Flash Cards</button>
+			<button class="fk-cards menu-buttons">See Fully Know Cards</button>
+			<button class="kk-cards menu-buttons">See Kinda Know Cards</button>
+			<button class="dk-cards menu-buttons">See Dont Know Cards</button>
+			<button class="stats-button menu-buttons">Show Stats</button>
+			<form class='add-card'>
+				<paper-input id='quest' label='Question/Prompt (Front of Card)'></paper-input>
+				<paper-input id='answer' label='Answer (Back of Card)'></paper-input>
+				<button type='submit' class='submit'>Add Card</button>
+				<button type='reset' class='clear'>Clear</button>
+				<div id='close-form' class='close'>&times;</div>
+			</form>
 		</div>
 		<form class='decks'>
-			<input id='fk' type="checkbox" value="useFK"><span>Fully Know</span>
-			<input id='kk' type="checkbox" value="useKK"><span>Kinda Know</span>
-			<input id='dk' type="checkbox" value="useDK" checked><span>Dont Know</span>
+			<input id='fk' type="checkbox" value="useFK" class='check'><span class='check-label'>Fully Know</span>
+			<input id='kk' type="checkbox" value="useKK" class='check'><span class='check-label'>Kinda Know</span>
+			<input id='dk' type="checkbox" value="useDK" checked class='check'><span class='check-label'>Dont Know</span>
 			<button type='submit' class='generate'>Generate a New Deck</button>
-		</form>
-		<form class='add-card'>
-			<paper-input id='quest' label='Question/Prompt (Front of Card)'></paper-input>
-			<paper-input id='answer' label='Answer (Back of Card)'></paper-input>
-			<button type='submit' class='submit'>Add Card</button>
-			<button type='reset' class='clear'>Clear</button>
-			<div id='close-form' class='close'>&times;</div>
 		</form>
 	</main>
 

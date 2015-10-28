@@ -2,11 +2,17 @@
   box-sizing: border-box;
 }
 
+body {
+  background: LemonChiffon;
+}
+
 .board {
   max-width: 960px;
   height: 80vh;
   position: relative;
   margin: 0 auto;
+  background-color: #DCDCDC;
+  padding-top: 25px;
 }
 
 .card {
@@ -14,9 +20,11 @@
   height: 200px;
   border: 2px solid green;
   position: relative;
-  margin: 50px auto;
+  margin: 0 auto;
+  font-size: 20px;
+  text-align: center;
+  background: white;
 }
-
 /*.flip {
   position: absolute;
   top: 0;
@@ -31,17 +39,19 @@
 .choices {
   display: none;
   position: absolute;
-  left: 50px;
-  top: 0;
-  border: 2px solid red;
+  left: 0;
+  bottom: 0;
+  background: rgba(141,212,207,0.2);
 }
 
 .add-card {
   display: none;
-  position: fixed;
+  position: absolute;
   bottom: 0;
+  left:0;
   width: 250px;
   border: 2px solid black;
+  background: white;
 }
 
 .close {
@@ -90,13 +100,13 @@
 }
 
 .stats-container {
-  width: 200px;
+  width: 300px;
   height: 200px;
   position: absolute;
+  padding-top: 25px;
   right: 10px;
   top: 0;
   display: none;
-  border: 2px solid red;
 }
 
 .card-menu-icon {
@@ -117,26 +127,34 @@
 .hud {
   display: flex;
   flex-flow: row wrap;
+  justify-content: center;
+  max-width: 960px;
+  margin: 0 auto;
+  height: 25px;
 }
 .counters {
   /*display: inline-block;*/
   flex-shrink: 0;
   flex-grow: 1;
-  padding: 0 15px;
+  padding: 5px 15px;
   height: 100%;
   margin: 0;
+  text-align: center;
 }
 
-.fk-count {
-  background: rgba(0,215,0,1.0);
+.fk-count,
+.fully-know {
+  background: green;
 }
 
-.kk-count {
-  background: rgba(215,215,0,1.0);
+.kk-count,
+.kinda-know {
+  background: yellow;
 }
 
-.dk-count {
-  background: rgba(215,0,0,1.0);
+.dk-count,
+.dont-know {
+  background: red;
 }
 
 h2 {
@@ -157,11 +175,60 @@ h2 {
   width: calc(50% - 100px);
   top: 0;
   left: 0;
+  padding-top: 25px;
 }
 
 .buttons {
   width: 50%;
+  position: relative;
+  top: 100px;
+  left: 37.5%;
+}
+
+.next,
+.flip {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.menu {
   position: absolute;
+  width: 300px;
+  top: 25px;
   right: 0;
-  bottom: 0;
+  height: 80vh;
+  font-size: 12px;
+  transition: all 1s ease;
+  background: #564F4F;
+}
+
+.offscreen {
+  transform: translateX(300px);
+}
+
+.menu-buttons {
+  width: 100%;
+  height: 45px;
+}
+
+.stat {
+  font-size: 16px;
+}
+
+.decks {
+  width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-flow: nowrap row;
+  justify-content: center;
+}
+
+.check-label {
+  padding: 3px 10px 0 3px;
+}
+
+#fk,
+#kk,
+#dk {
+  margin-top: 3px;
 }

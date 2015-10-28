@@ -3,11 +3,9 @@
 //TODO: fix werid click button keyboard action
 //TODO: fix remove card
 //TODO: change init - or add start button
-//TODO; fx it for time
-//TODO: view cards based on comfort
-//TODO: D3 based on time data
-//TODO: shuffle cards in deck generator
-//TODO: at certain time, no longer allow Fully know
+//TODO: fix end of deck
+//TODO: optimize for mobile
+
 
 //clean up code
 
@@ -74,13 +72,13 @@ var Game = {
   useKK: false,
   useDK: true,
   cardDeck: [],
-  cardIndex: 0
+  cardIndex: 0,
+  svgContainer: d3.select('.bubbles').append('svg').attr('width','100%').attr('height','100%')
 };
 
 
 //Future TODO: tie in with API (wolfram alpha?) to have answers populate themselves
 // Furutre TODO: or create a generate deck based on popular questions?
-init();
 
 function initCards() {
   Model.flashcards.push(new FlashCard('teacher',
@@ -97,8 +95,11 @@ function initCards() {
   // }
 }
 
-function setCurrentCard(index) {
-  Game.currentCard = Game.cardDeck[index];
+function setCurrentCard(card) {
+  Game.currentCard = card;
+  Game.currentCard.setStartTime();
+  Game.currentCard.updateViewCount();
+  updateAll();
 }
 
 function updateDisplay() {
@@ -117,6 +118,7 @@ function flipCard() {
     Game.currentCard.setStopTime();
     Game.currentCard.updateTime();
     checkTime();
+    updateBubbleSvg();
   } else {
     console.log('flipped to quest');
     $('.card-text').html(Game.currentCard.question);
@@ -212,13 +214,9 @@ function nextCard() {
   if (Game.cardDeck.length === 0) {
     deckEmpty();
   } else {
-    setCurrentCard(Game.cardIndex);
+    setCurrentCard(Game.cardDeck[Game.cardIndex]);
     console.log('from next card');
-    updateDisplay();
     Game.onQuestion = true;
-    setStats();
-    Game.currentCard.setStartTime();
-    Game.currentCard.updateViewCount();
     hideButtons();
   }
 }
@@ -333,10 +331,8 @@ function showCards(array) {
     var outerDiv = $('<div/>');
     outerDiv.addClass('outer-div');
     outerDiv.on('click', function() {
-      Game.currentCard = card;
-      updateAll();
+      setCurrentCard(card);
       removeOverlay();
-      Game.currentCard.updateViewCount();
     });
     var questionDiv = $('<div/>');
     var answerDiv = $('<div/>');
@@ -372,11 +368,11 @@ function setStats() {
   // var lastAnswer = $('<div/>')
   // lastAnswer.addClass('stat').html(Game.currentCard.lastAnswer);
   var viewed = $('<div/>');
-  viewed.addClass('stat-views').html('Number of Views: ' + Game.currentCard.viewCount);
+  viewed.addClass('stat-views stat').html('Number of Views: ');
   var comfort = $('<div/>');
   comfort.addClass('stat').html('Comfort Level: ' + Game.currentCard.comfort);
   var timeViewed = $('<div/>');
-  timeViewed.addClass('stat').html('Total Time Spent Looking At Card: ' + Game.currentCard.totalTime / 1000 + ' seconds');
+  timeViewed.addClass('stat').html('Total Time Spent Looking At Card: ' + Game.currentCard.totalTime / 1000 + 's');
   // var viewed = $('<div/>');
   // viewed.addClass('stat').html(Game.currentCard.hasViewed);
   statsContainer.append(viewed, comfort, timeViewed);
@@ -384,14 +380,11 @@ function setStats() {
 }
 
 function createTicks(className, views) {
-  console.log('creating');
   var viewsArray = [];
   var x = 5;
-  var y1 = 5;
-  var y2 = 20;
+  var y1 = 15;
+  var y2 = 30;
   var maxX = views < 20 ? 100 : x * views;
-  console.log(views < 10);
-  console.log(maxX);
 
   for (var i = 0; i < views; i++) {
     if (i % 5 === 4) {
@@ -402,20 +395,24 @@ function createTicks(className, views) {
     }
   }
 
-  var svgContainer = d3.select(className).append('svg').attr('width', maxX).attr('height', 30);
+  var svgContainer = d3.select(className).append('svg')
+                       .attr('width', maxX)
+                       .attr('height', 30);
 
   var lines = svgContainer.selectAll('line').data(viewsArray).enter().append('line');
 
   var lineAttributes = lines.attr('x1', function(d,i){
-    return (i - d[0]) * d[1] + d[1];
-  }).attr('x2', function(d,i){
-    return i * d[1] + d[1];
-  }).attr('y1', function(d,i){
-    return d[2];
-  }).attr('y2',function(d,i){
-    return d[3];
-  }).attr('stroke-width', 2).attr('stroke','black');
-}
+                              return (i - d[0]) * d[1] + d[1];
+                            }).attr('x2', function(d,i){
+                              return i * d[1] + d[1];
+                            }).attr('y1', function(d,i){
+                              return d[2];
+                            }).attr('y2',function(d,i){
+                              return d[3];
+                            })
+                            .attr('stroke-width', 2)
+                            .attr('stroke','black');
+                          }
 
 $('.fully-know').on('click', function() {
   Game.currentCard.setAsFullyKnow();
@@ -482,14 +479,12 @@ function generateDeck() {
   console.log(Game.cardDeck);
 }
 
-function init() {
+(function init() {
   initCards();
   updateArrays();
   generateDeck();
-  setCurrentCard(Game.cardIndex);
-  updateDisplay();
-
-}
+  setCurrentCard(Game.cardDeck[Game.cardIndex]);
+})();
 
 $('.generate').on('click', function(evt) {
   evt.preventDefault();
@@ -507,15 +502,20 @@ $('.generate').on('click', function(evt) {
 
 function resetDeck() {
   Game.cardIndex = 0;
-  setCurrentCard(Game.cardIndex);
-  updateDisplay();
+  setCurrentCard(Game.cardDeck[Game.cardIndex]);
 }
 
 function deckEmpty() {
   alert('deck is empty, generate new deck');
 }
 
-$('.card-menu-icon').on('click', toggleStatsBar);
+$('.card-menu-icon').on('click', toggleMenuBar);
+
+function toggleMenuBar() {
+  $('.menu').toggleClass('offscreen');
+}
+
+$('.stats-button').on('click', toggleStatsBar);
 
 function toggleStatsBar() {
   $('.stats-container').toggle();
@@ -538,20 +538,17 @@ function shuffle(array) {
   return shuffledArray;
 }
 
-//random d3
-//TODO: somehow incorporate D3... maybe generate a chart/table after done studying
-//TODO: data - # times views, how many fk,dk,kk responses?
-//TODO: add that into the view all cards overlay?
-
-Game.svgContainer = d3.select('.bubbles').append('svg').attr('width','100%').attr('height','100%');
+//TODO: make bubbles outline number of flashcards
+//TODO: change it up depending on the comfort level
 
 function updateBubbleSvg() {
   //if loop to only create first time or sep function
   var maxRadius = 30;
+  var redMinRadius = 15;
+  var greenMinRadius = 5;
+  var yellowMinRadius = 10;
   //update
   var circles = Game.svgContainer.selectAll('circle').data(Model.flashcards);
-  //enter
-  circles.enter().append('circle');
 
   circles.attr('cx', function(d,i){
            return i % 5 * maxRadius * 2 + maxRadius;
@@ -559,10 +556,20 @@ function updateBubbleSvg() {
          .attr('cy', function(d,i){
            return Math.floor(i / 5) * maxRadius * 2 + maxRadius;
          })
+      .transition()
          .attr('r', function(d,i){
-           var radius = maxRadius - d.viewCount * 5;
-           console.log(radius);
-           return radius <= 0 ? 5 : radius;
+           var radius = maxRadius - d.viewCount * 2;
+           if(d.comfort === 'fully know'){
+             return radius <= greenMinRadius ? greenMinRadius : radius;
+           } else if(d.comfort === 'kinda know'){
+             return radius <= yellowMinRadius ? yellowMinRadius : radius;
+           } else {
+             return radius <= redMinRadius ? redMinRadius : radius;
+           }
+         })
+         .duration(function(d,i){
+          //  return d.totalTime;
+            return d.lastTurnTime;
          })
          .attr('fill', function(d){
            if (d.comfort === 'fully know'){
@@ -573,6 +580,22 @@ function updateBubbleSvg() {
              return 'red';
            }
          });
+
+  //enter
+  circles.enter().append('circle')
+         .attr('cx', function(d,i){
+           return i % 5 * maxRadius * 2 + maxRadius;
+         })
+         .attr('cy', function(d,i){
+           return Math.floor(i / 5) * maxRadius * 2 + maxRadius;
+         })
+         .attr('r', function(d,i){
+           var radius = maxRadius - d.viewCount * 5;
+           console.log(radius);
+           return radius <= 0 ? 5 : radius;
+         })
+         .attr('fill', 'red');
+
   //exit
   circles.exit().remove();
 }
