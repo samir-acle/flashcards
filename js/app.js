@@ -5,6 +5,9 @@
 //TODO: change init - or add start button
 //TODO: fix end of deck
 //TODO: optimize for mobile
+//TODO: something w/ last time array
+//TODO: add previous button
+//TODO: reset button
 
 
 //clean up code
@@ -49,14 +52,17 @@ FlashCard.prototype = {
   },
   setStartTime: function() {
     this.oldTime = Date.now();
+    console.log('time set');
   },
   setStopTime: function() {
     this.newTime = Date.now();
+    console.log('time stopped');
   },
   updateTime: function() {
     this.lastTurnTime = this.newTime - this.oldTime; //ms
     this.timeArray.push(this.lastTurnTime);
     this.totalTime += this.lastTurnTime;
+    console.log('update time ',this.lastTurnTime);
   }
 };
 
@@ -109,7 +115,6 @@ function updateDisplay() {
 
 function flipCard() {
   if (Game.onQuestion) {
-    console.log('flipped to answer');
     $('.card-text').html(Game.currentCard.answer);
     Game.onQuestion = !Game.onQuestion;
     // $('.correct-button').show();
@@ -118,21 +123,17 @@ function flipCard() {
     Game.currentCard.setStopTime();
     Game.currentCard.updateTime();
     checkTime();
-    updateBubbleSvg();
+    updateAll();
   } else {
-    console.log('flipped to quest');
     $('.card-text').html(Game.currentCard.question);
     Game.onQuestion = !Game.onQuestion;
-    // $('.correct-button').hide();
-    // $('.wrong-button').hide();
     hideButtons();
+    Game.currentCard.setStartTime();
   }
 }
 
 function checkTime() {
-  console.log(Game.currentCard.lastTurnTime);
   if(Game.currentCard.lastTurnTime > 5000) {
-    console.log('prevent');
     preventFullyKnows();
   }
 }
@@ -148,7 +149,7 @@ function preventFullyKnows() {
 function restoreFullyKnows() {
   var fkButton = $('.fully-know');
   fkButton.css({
-    background: 'buttonface',
+    background: 'green',
     'pointer-events': 'auto'
   });
 }
@@ -162,51 +163,16 @@ $('.next').on('click', function(evt) {
   evt.preventDefault();
   nextCard();
 });
-// $('.correct-button').on('click', function() {
-//   var currentCard = Game.currentCard;
-//   if(currentCard.lastAnswer !== 'Right'){
-//     updateCounters('Right', 1);
-//   }
-//   currentCard.setAsRight();
-//   currentCard.setAsHasViewed();
-//   Game.correctArray.push(currentCard);
-//   Game.wrongArray.splice(Game.wrongArray.indexOf(currentCard), 1);
-//   updateHud();
-//   nextCard();
-// });
-//
-// $('.wrong-button').on('click', function() {
-//   var currentCard = Game.currentCard;
-//   if(currentCard.lastAnswer !== 'Wrong'){
-//     updateCounters('Wrong', 1);
-//   }
-//   currentCard.setAsWrong();
-//   currentCard.setAsHasViewed();
-//   updateHud();
-//   nextCard();
-// });
 
 function nextCard() {
-  // if (Game.wrongArray.length > 0) {
-  //   var index = Math.floor(Math.random() * Game.wrongArray.length);
-  //   setCurrentCard(index);
-  //   initDisplay();
-  //   Game.onQuestion = true;
-  //   setStats();
-  //   Game.currentCard.setStartTime();
-  // } else {
-  //   $('.card-text').html('No More Cards');
-  // }
   restoreFullyKnows();
   Game.currentCard.setStopTime();
   Game.currentCard.updateTime();
   updateBubbleSvg();
 
   if (Game.cardIndex === Game.cardDeck.length - 1) {
-    console.log('check');
     Game.cardIndex = 0;
     generateDeck();
-    console.log('cardDeck', Game.cardDeck);
   } else {
     Game.cardIndex++;
   }
@@ -215,7 +181,6 @@ function nextCard() {
     deckEmpty();
   } else {
     setCurrentCard(Game.cardDeck[Game.cardIndex]);
-    console.log('from next card');
     Game.onQuestion = true;
     hideButtons();
   }
@@ -358,7 +323,6 @@ function showCards(array) {
 $('#close-all').on('click', removeOverlay);
 
 function removeOverlay() {
-  console.log('trying to close');
   $('.container').remove();
 }
 
@@ -373,9 +337,11 @@ function setStats() {
   comfort.addClass('stat').html('Comfort Level: ' + Game.currentCard.comfort);
   var timeViewed = $('<div/>');
   timeViewed.addClass('stat').html('Total Time Spent Looking At Card: ' + Game.currentCard.totalTime / 1000 + 's');
+  var lastTurnTime = $('<div/>');
+  lastTurnTime.addClass('stat').html('Last Time Spent Looking At Card: ' + Game.currentCard.lastTurnTime / 1000 + 's');
   // var viewed = $('<div/>');
   // viewed.addClass('stat').html(Game.currentCard.hasViewed);
-  statsContainer.append(viewed, comfort, timeViewed);
+  statsContainer.append(viewed, comfort, timeViewed, lastTurnTime);
   createTicks('.stat-views',Game.currentCard.viewCount);
 }
 
@@ -476,15 +442,16 @@ function generateDeck() {
   }
 
   Game.cardDeck = shuffle(Game.cardDeck);
-  console.log(Game.cardDeck);
 }
 
-(function init() {
+function init() {
   initCards();
   updateArrays();
   generateDeck();
   setCurrentCard(Game.cardDeck[Game.cardIndex]);
-})();
+}
+
+init();
 
 $('.generate').on('click', function(evt) {
   evt.preventDefault();
@@ -558,7 +525,7 @@ function updateBubbleSvg() {
          })
       .transition()
          .attr('r', function(d,i){
-           var radius = maxRadius - d.viewCount * 2;
+           var radius = maxRadius - d.viewCount * 3;
            if(d.comfort === 'fully know'){
              return radius <= greenMinRadius ? greenMinRadius : radius;
            } else if(d.comfort === 'kinda know'){
@@ -591,7 +558,6 @@ function updateBubbleSvg() {
          })
          .attr('r', function(d,i){
            var radius = maxRadius - d.viewCount * 5;
-           console.log(radius);
            return radius <= 0 ? 5 : radius;
          })
          .attr('fill', 'red');
@@ -599,3 +565,9 @@ function updateBubbleSvg() {
   //exit
   circles.exit().remove();
 }
+
+function resetGame() {
+  generateDeck();
+}
+
+$('.reset').on('click', resetGame);
