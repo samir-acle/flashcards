@@ -105,28 +105,40 @@ function initCards() {
 function setCurrentCard(card) {
   Game.currentCard = card;
   Game.currentCard.setStartTime();
-  Game.currentCard.updateViewCount();
-  updateAll();
+  Game.onQuestion = true;
+  // Game.currentCard.updateViewCount();
+  // updateAll();
 }
 
 function updateDisplay() {
   if (!Game.onQuestion) {
     $('.card-text').html(Game.currentCard.answer);
-    stopTime();
+    console.log('this is from upd display');
+    // stopTime();
     checkTime();
     showButtons();
+    // Game.currentCard.updateViewCount();
     // updateAll();
   } else {
     $('.card-text').html(Game.currentCard.question);
     Game.currentCard.setStartTime();
     hideButtons();
   }
+
+  setStats();
+  updateHud();
+  updateBubbleSvg();
 }
 
 function flipCard() {
   if(!Game.deckEmpty){
     Game.onQuestion = !Game.onQuestion;
-    updateAll();
+    stopTime();
+
+    if (!Game.onQuestion) {
+      Game.currentCard.updateViewCount();
+    }
+    // updateAll();
   }
 }
 
@@ -156,10 +168,12 @@ function restoreFullyKnows() {
 $('.flip').on('click', function(evt) {
   evt.preventDefault();
   flipCard();
+  updateDisplay();
 });
 $('.next').on('click', function(evt) {
   evt.preventDefault();
   nextCard();
+  updateDisplay();
 });
 
 function stopTime() {
@@ -170,7 +184,14 @@ function stopTime() {
 function nextCard() {
   if(!Game.deckEmpty) {
     restoreFullyKnows();
-    stopTime();
+
+    // if (Game.onQuestion) {
+    //   console.log('this is from nextcard');
+    //   stopTime();
+    }
+    // } else {
+    //   Game.onQuestion = true;
+    // }
 
     // updateBubbleSvg();
 
@@ -188,7 +209,7 @@ function nextCard() {
       Game.onQuestion = true;
       hideButtons();
     }
-  }
+  // }
 }
 
 $('.submit').on('click', function(evt) {
@@ -203,7 +224,9 @@ $('.submit').on('click', function(evt) {
 function createNewCard(question, answer) {
   var newCard = new FlashCard(question, answer);
   Model.flashcards.push(newCard);
-  updateAll();
+  updateArrays();
+  // updateHud();
+  updateDisplay();
   // updateArrays();
   // updateHud();
 }
@@ -244,7 +267,8 @@ function removeCard() {
   var index = Model.flashcards.indexOf(Game.currentCard);
   Model.flashcards.splice(index,1);
   nextCard();
-  updateAll();
+  updateArrays();
+  updateDisplay();
 }
 
 // function updateCounters(string, change) {
@@ -297,6 +321,7 @@ function showCards(array) {
     outerDiv.addClass('outer-div');
     outerDiv.on('click', function() {
       setCurrentCard(card);
+      updateDisplay();
       removeOverlay();
     });
     var questionDiv = $('<div/>');
@@ -382,32 +407,40 @@ function createTicks(className, views) {
 
 $('.fully-know').on('click', function() {
   Game.currentCard.setAsFullyKnow();
-  Game.onQuestion = true;
-  updateAll();
-  nextCard();
+  // Game.onQuestion = true;
+  updateArrays();
+  updateDisplay();
+  // console.log(Game.onQuestion);
+  // updateAll();
+  // nextCard();
 });
 $('.kinda-know').on('click', function() {
   Game.currentCard.setAsKindaKnow();
-  Game.onQuestion = true;
-  updateAll();
-  nextCard();
+  // Game.onQuestion = true;
+  // console.log(Game.onQuestion);
+  // updateAll();
+  // nextCard();
+  updateArrays();
+  updateDisplay();
 });
 $('.dont-know').on('click', function() {
   Game.currentCard.setAsDoNotKnow();
-  Game.onQuestion = true;
-  updateAll();
-  nextCard();
+  // console.log(Game.onQuestion);
+  // updateAll();
+  // nextCard();
+  updateArrays();
+  updateDisplay();
 });
 
-function updateAll() {
-  // Game.currentCard.updateViewCount();
-  updateArrays();
-  updateHud();
-  setStats();
-  updateDisplay();
-  updateBubbleSvg();
-  // nextCard();
-}
+// function updateAll() {
+//   // Game.currentCard.updateViewCount();
+//   updateArrays();
+//   updateHud();
+//   setStats();
+//   updateDisplay();
+//   updateBubbleSvg();
+//   // nextCard();
+// }
 
 function updateArrays() {
   var fkArray = [];
@@ -458,6 +491,7 @@ function init() {
   console.log(Game.cardIndex);
   Game.cardIndex = 0;
   setCurrentCard(Game.cardDeck[Game.cardIndex]);
+  updateDisplay();
 }
 
 init();
@@ -479,6 +513,7 @@ $('.generate').on('click', function(evt) {
 function resetDeck() {
   Game.cardIndex = 0;
   setCurrentCard(Game.cardDeck[Game.cardIndex]);
+  updateDisplay();
 }
 
 function deckEmpty() {
@@ -580,6 +615,7 @@ function updateBubbleSvg() {
 
   circles.on('click', function(d) {
     setCurrentCard(d);
+    updateDisplay();
   });
 
   //exit
