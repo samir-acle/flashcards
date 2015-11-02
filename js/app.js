@@ -98,6 +98,7 @@ $('.flip').on('click', function(evt) {
   flipCard();
   updateDisplay();
 });
+// Even if your <script> is at the end of your body, it's still considered good practice to put the procedural part of the script inside a $(document).ready
 
 /** click handler for keypresses*/
 $(document).on('keyup', function(evt) {
@@ -177,6 +178,31 @@ $('.dont-know').on('click', function() {
   updateDisplay();
 });
 
+/* Lots of event listeners! Could you attach them to the FlashCard object? For instance:
+
+Flashcard.events = {
+  fullyKnow: function(){
+
+  }
+}
+
+...and then:
+(function addEventListeners(){
+  $(".fully-know").on("click", Flashcard.events.fullyKnow);
+}())
+
+Or, if you want to get fancy:
+var buttons = ["fully-know", "kinda-know", "dont-know"]
+var i;
+for(i = 0; i < buttons.length; i++){
+  $("." + buttons[i]).on("click", function(){
+    eval("Game.currentCard.setAs" + buttons[i] + "()");
+    updateArrays();
+    updateDisplay();
+  });
+}
+*/
+
 /** click handler to create deck of cards*/
 $('.generate').on('click', function(evt) {
   evt.preventDefault();
@@ -220,6 +246,7 @@ $('.reset').on('click', resetGame);
 
 /** @desc creates placeholder flashcards */
 function initCards() {
+  // Would use a loop here
   Model.flashcards.push(new FlashCard('teacher',
     'lao shi'));
   Model.flashcards.push(new FlashCard('lawyer', 'lu shi'));
@@ -272,6 +299,11 @@ function updateDisplay() {
  * @desc sets boolean to opposite to represent either front or back of the card
  */
 function flipCard() {
+  /* To avoid having to indent too many levels, I'd prefer
+  if(Game.deckEmpty) return;
+  Game.onQuestion = !Game.onQuestion;
+  stopTime()...
+  */
   if (!Game.deckEmpty) {
     Game.onQuestion = !Game.onQuestion;
     stopTime();
@@ -312,6 +344,8 @@ function stopTime() {
   Game.currentCard.setStopTime();
   Game.currentCard.updateTime();
 }
+
+// To my mind, there are maybe 3 main models acting here: the flashcard, the game, and the player. Could you make all of these functions attached to those models so there are no exposed functions?
 
 /** @desc switches current flash card*/
 function nextCard() {
@@ -536,6 +570,7 @@ function generateDeck() {
     Game.deckEmpty = false;
   }
 }
+// Generally, if a file of code is more than 100 lines long, it should be split into separate files. Use Grunt or whichever package manager to take care of all the minification for you.
 
 /** @desc changes currently displayed card to the first in the deck*/
 function resetDeck() {
